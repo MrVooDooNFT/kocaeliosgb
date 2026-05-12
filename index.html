@@ -50,6 +50,11 @@
 <option value="person">Şahıs</option>
 </select>
 
+<label style="display:block; margin-top:15px;">
+<input type="checkbox" id="showUnitPrices" onchange="updateUnitPriceVisibility()">
+Test birim fiyatlarını göster
+</label>
+
 <div id="companyArea" class="hidden">
 
 <input type="text" id="healthFirma" placeholder="Firma Adı">
@@ -421,7 +426,8 @@ hekimSure,
 total,
 finalTotal: total,
 validDate: "31/12/" + year,
-selectedTests:[]
+selectedTests:[],
+showUnitPrices:false
 };
 
 renderOffer();
@@ -491,7 +497,8 @@ personPrice: calculated.personPrice,
 total: calculated.total,
 finalTotal: calculated.total,
 validDate: finalDate,
-selectedTests:selectedTests
+selectedTests:selectedTests,
+showUnitPrices:document.getElementById("showUnitPrices").checked
 };
 
 renderOffer();
@@ -542,12 +549,67 @@ selectedCount,
 total,
 finalTotal: total,
 validDate: finalDate,
-selectedTests:selectedTests
+selectedTests:selectedTests,
+showUnitPrices:document.getElementById("showUnitPrices").checked
 };
 
 renderOffer();
 renderTestPriceEditor();
 showPreview(true);
+
+}
+
+function updateUnitPriceVisibility(){
+
+if(!CURRENT_OFFER){
+return;
+}
+
+if(CURRENT_OFFER.type !== "companyHealth" && CURRENT_OFFER.type !== "personHealth"){
+return;
+}
+
+CURRENT_OFFER.showUnitPrices =
+document.getElementById("showUnitPrices").checked;
+
+renderOffer();
+
+}
+
+function renderSelectedTestsForOffer(){
+
+if(!CURRENT_OFFER.selectedTests || CURRENT_OFFER.selectedTests.length === 0){
+return "";
+}
+
+let html = `
+<h3>Yapılacak Testler</h3>
+<table>
+<tr>
+<th>Test</th>
+`;
+
+if(CURRENT_OFFER.showUnitPrices){
+html += `<th>Birim Fiyat</th>`;
+}
+
+html += `</tr>`;
+
+CURRENT_OFFER.selectedTests.forEach(test=>{
+
+html += `<tr><td>${test.name}</td>`;
+
+if(CURRENT_OFFER.showUnitPrices){
+html += `<td>${test.finalPrice} TL</td>`;
+}
+
+html += `</tr>`;
+
+});
+
+html += `</table>`;
+
+return html;
 
 }
 
@@ -631,6 +693,9 @@ CURRENT_OFFER.finalTotal = total;
 
 }
 
+CURRENT_OFFER.showUnitPrices =
+document.getElementById("showUnitPrices").checked;
+
 document.getElementById("discountInput").value = "";
 
 renderOffer();
@@ -691,6 +756,7 @@ document.getElementById("offerPreview").innerHTML = `
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
 </table>
+${renderSelectedTestsForOffer()}
 `;
 
 }
@@ -705,6 +771,7 @@ document.getElementById("offerPreview").innerHTML = `
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
 </table>
+${renderSelectedTestsForOffer()}
 `;
 
 }
@@ -723,6 +790,43 @@ document.getElementById("testPriceEditArea").classList.remove("hidden");
 }else{
 document.getElementById("testPriceEditArea").classList.add("hidden");
 }
+
+}
+
+function renderSelectedTestsForPdf(){
+
+if(!CURRENT_OFFER.selectedTests || CURRENT_OFFER.selectedTests.length === 0){
+return "";
+}
+
+let html = `
+<tr><th colspan="${CURRENT_OFFER.showUnitPrices ? 2 : 1}">Yapılacak Testler</th></tr>
+`;
+
+CURRENT_OFFER.selectedTests.forEach(test=>{
+
+if(CURRENT_OFFER.showUnitPrices){
+
+html += `
+<tr>
+<td>${test.name}</td>
+<td>${test.finalPrice} TL</td>
+</tr>
+`;
+
+}else{
+
+html += `
+<tr>
+<td colspan="2">${test.name}</td>
+</tr>
+`;
+
+}
+
+});
+
+return html;
 
 }
 
@@ -757,6 +861,7 @@ rows = `
 <tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+${renderSelectedTestsForPdf()}
 `;
 
 }
@@ -770,6 +875,7 @@ rows = `
 <tr><th>Seçilen Test Sayısı</th><td>${CURRENT_OFFER.selectedCount}</td></tr>
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+${renderSelectedTestsForPdf()}
 `;
 
 }
