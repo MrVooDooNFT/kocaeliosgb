@@ -121,17 +121,14 @@ text-align:center;
 }
 
 .service-cover-logo{
-width:58mm;
+width:175mm;
 height:auto;
 display:block;
 margin:0 auto 7mm auto;
 }
 
 .service-cover-brand{
-font-size:22px;
-font-weight:700;
-letter-spacing:.4px;
-color:#1d4f8f;
+display:none;
 }
 
 .service-cover-title{
