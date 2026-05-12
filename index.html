@@ -512,6 +512,13 @@ function calculatePersonTotal(selectedTests){
 
 const selectedCount = selectedTests.length;
 
+if(
+selectedCount === 1 &&
+selectedTests[0].key === "test_ise_giris_raporu"
+){
+return 300;
+}
+
 let total = 0;
 
 if(selectedCount <= 7){
