@@ -58,6 +58,13 @@
 <h3 style="margin-top:20px;">Testler</h3>
 <div id="companyTests"></div>
 
+<h3 style="margin-top:20px;">Listede Olmayan Test Ekle</h3>
+<input type="text" id="companyCustomTestName" placeholder="Test Adı">
+<input type="number" id="companyCustomTestPrice" placeholder="Test Fiyatı">
+<button onclick="addCustomTest('company')">Test Ekle</button>
+
+<div id="companyCustomTests"></div>
+
 <button onclick="createCompanyHealthOffer()">Teklif Oluştur</button>
 
 </div>
@@ -69,6 +76,13 @@
 <h3 style="margin-top:20px;">Testler</h3>
 <div id="personTests"></div>
 
+<h3 style="margin-top:20px;">Listede Olmayan Test Ekle</h3>
+<input type="text" id="personCustomTestName" placeholder="Test Adı">
+<input type="number" id="personCustomTestPrice" placeholder="Test Fiyatı">
+<button onclick="addCustomTest('person')">Test Ekle</button>
+
+<div id="personCustomTests"></div>
+
 <button onclick="createPersonOffer()">Şahıs Teklifi Oluştur</button>
 
 </div>
@@ -76,6 +90,8 @@
 </div>
 
 <div id="offerPreview" class="offer hidden"></div>
+
+<div id="testPriceEditArea" class="offer hidden"></div>
 
 <div id="discountArea" class="discountBox hidden">
 <label>İndirim Yap:</label>
@@ -118,6 +134,9 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPV
 
 let PRICES = {};
 let CURRENT_OFFER = null;
+
+let CUSTOM_COMPANY_TESTS = [];
+let CUSTOM_PERSON_TESTS = [];
 
 const TEST_KEYS = [
 ["EKG","test_ekg"],
@@ -164,7 +183,7 @@ let html = "";
 
 TEST_KEYS.forEach(test=>{
 
-html += `<label><input type="checkbox" class="testItem" data-key="${test[1]}" value="${test[1]}"> ${test[0]}</label><br>`;
+html += `<label><input type="checkbox" class="testItem" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}"> ${test[0]}</label><br>`;
 
 });
 
@@ -180,9 +199,7 @@ document.getElementById("mainType").addEventListener("change",function(){
 document.getElementById("serviceArea").classList.add("hidden");
 document.getElementById("healthArea").classList.add("hidden");
 
-document.getElementById("offerPreview").classList.add("hidden");
-document.getElementById("discountArea").classList.add("hidden");
-document.getElementById("pdfButton").classList.add("hidden");
+hideOutputs();
 
 if(this.value === "service"){
 document.getElementById("serviceArea").classList.remove("hidden");
@@ -199,9 +216,7 @@ document.getElementById("healthType").addEventListener("change",function(){
 document.getElementById("companyArea").classList.add("hidden");
 document.getElementById("personArea").classList.add("hidden");
 
-document.getElementById("offerPreview").classList.add("hidden");
-document.getElementById("discountArea").classList.add("hidden");
-document.getElementById("pdfButton").classList.add("hidden");
+hideOutputs();
 
 if(this.value === "company"){
 document.getElementById("companyArea").classList.remove("hidden");
@@ -212,6 +227,143 @@ document.getElementById("personArea").classList.remove("hidden");
 }
 
 });
+
+function hideOutputs(){
+
+document.getElementById("offerPreview").classList.add("hidden");
+document.getElementById("testPriceEditArea").classList.add("hidden");
+document.getElementById("discountArea").classList.add("hidden");
+document.getElementById("pdfButton").classList.add("hidden");
+
+}
+
+function addCustomTest(type){
+
+let nameInput;
+let priceInput;
+let list;
+let targetDiv;
+
+if(type === "company"){
+
+nameInput = document.getElementById("companyCustomTestName");
+priceInput = document.getElementById("companyCustomTestPrice");
+list = CUSTOM_COMPANY_TESTS;
+targetDiv = document.getElementById("companyCustomTests");
+
+}else{
+
+nameInput = document.getElementById("personCustomTestName");
+priceInput = document.getElementById("personCustomTestPrice");
+list = CUSTOM_PERSON_TESTS;
+targetDiv = document.getElementById("personCustomTests");
+
+}
+
+const name = nameInput.value.trim();
+const price = Number(priceInput.value);
+
+if(!name || !price){
+alert("Test adı ve fiyatı giriniz.");
+return;
+}
+
+list.push({
+name:name,
+price:price
+});
+
+nameInput.value = "";
+priceInput.value = "";
+
+renderCustomTests(type);
+
+}
+
+function renderCustomTests(type){
+
+let list;
+let targetDiv;
+
+if(type === "company"){
+list = CUSTOM_COMPANY_TESTS;
+targetDiv = document.getElementById("companyCustomTests");
+}else{
+list = CUSTOM_PERSON_TESTS;
+targetDiv = document.getElementById("personCustomTests");
+}
+
+let html = "<div style='margin-top:10px;'>";
+
+list.forEach((test,index)=>{
+
+html += `
+<label>
+<input type="checkbox" class="customTestItem" data-index="${index}" checked>
+${test.name} (${test.price} TL)
+</label><br>
+`;
+
+});
+
+html += "</div>";
+
+targetDiv.innerHTML = html;
+
+}
+
+function getSelectedTests(type){
+
+let areaSelector;
+let customList;
+let customAreaSelector;
+
+if(type === "company"){
+areaSelector = "#companyArea .testItem:checked";
+customList = CUSTOM_COMPANY_TESTS;
+customAreaSelector = "#companyArea .customTestItem:checked";
+}else{
+areaSelector = "#personArea .testItem:checked";
+customList = CUSTOM_PERSON_TESTS;
+customAreaSelector = "#personArea .customTestItem:checked";
+}
+
+const selected = [];
+
+document.querySelectorAll(areaSelector).forEach(item=>{
+
+selected.push({
+name:item.dataset.name,
+key:item.dataset.key,
+price:PRICES[item.dataset.key] || 0,
+finalPrice:PRICES[item.dataset.key] || 0,
+custom:false
+});
+
+});
+
+document.querySelectorAll(customAreaSelector).forEach(item=>{
+
+const index = Number(item.dataset.index);
+const test = customList[index];
+
+if(test){
+
+selected.push({
+name:test.name,
+key:"custom_" + index,
+price:test.price,
+finalPrice:test.price,
+custom:true
+});
+
+}
+
+});
+
+return selected;
+
+}
 
 function createServiceOffer(){
 
@@ -268,11 +420,12 @@ uzmanSure,
 hekimSure,
 total,
 finalTotal: total,
-validDate: "31/12/" + year
+validDate: "31/12/" + year,
+selectedTests:[]
 };
 
 renderOffer();
-showPreview();
+showPreview(false);
 
 }
 
@@ -294,16 +447,12 @@ return PRICES["min_10_plus"];
 
 }
 
-function createCompanyHealthOffer(){
-
-const firma = document.getElementById("healthFirma").value;
-const count = Number(document.getElementById("healthCount").value);
-const checked = document.querySelectorAll("#companyArea .testItem:checked");
+function calculateCompanyTotal(selectedTests,count){
 
 let personPrice = 0;
 
-checked.forEach(item=>{
-personPrice += PRICES[item.dataset.key];
+selectedTests.forEach(test=>{
+personPrice += Number(test.finalPrice) || 0;
 });
 
 let total = personPrice * count;
@@ -315,6 +464,21 @@ total = minimumPrice;
 
 const shownPersonPrice = Math.round(total / count);
 
+return {
+personPrice:shownPersonPrice,
+total:total
+};
+
+}
+
+function createCompanyHealthOffer(){
+
+const firma = document.getElementById("healthFirma").value;
+const count = Number(document.getElementById("healthCount").value);
+const selectedTests = getSelectedTests("company");
+
+const calculated = calculateCompanyTotal(selectedTests,count);
+
 const date = new Date();
 date.setMonth(date.getMonth() + 1);
 const finalDate = date.toLocaleDateString("tr-TR");
@@ -323,32 +487,49 @@ CURRENT_OFFER = {
 type:"companyHealth",
 firma,
 count,
-personPrice: shownPersonPrice,
-total,
-finalTotal: total,
-validDate: finalDate
+personPrice: calculated.personPrice,
+total: calculated.total,
+finalTotal: calculated.total,
+validDate: finalDate,
+selectedTests:selectedTests
 };
 
 renderOffer();
-showPreview();
+renderTestPriceEditor();
+showPreview(true);
+
+}
+
+function calculatePersonTotal(selectedTests){
+
+const selectedCount = selectedTests.length;
+
+let total = 0;
+
+if(selectedCount <= 7){
+
+total =
+PRICES["paket_" + selectedCount + "_test"] || 0;
+
+}else{
+
+selectedTests.forEach(test=>{
+total += Number(test.finalPrice) || 0;
+});
+
+}
+
+return total;
 
 }
 
 function createPersonOffer(){
 
 const name = document.getElementById("personName").value;
-const checked = document.querySelectorAll("#personArea .testItem:checked");
-const selectedCount = checked.length;
+const selectedTests = getSelectedTests("person");
+const selectedCount = selectedTests.length;
 
-let total = 0;
-
-if(selectedCount <= 7){
-total = PRICES["paket_" + selectedCount + "_test"] || 0;
-}else{
-checked.forEach(item=>{
-total += PRICES[item.dataset.key];
-});
-}
+const total = calculatePersonTotal(selectedTests);
 
 const date = new Date();
 date.setMonth(date.getMonth() + 1);
@@ -360,11 +541,100 @@ name,
 selectedCount,
 total,
 finalTotal: total,
-validDate: finalDate
+validDate: finalDate,
+selectedTests:selectedTests
 };
 
 renderOffer();
-showPreview();
+renderTestPriceEditor();
+showPreview(true);
+
+}
+
+function renderTestPriceEditor(){
+
+if(!CURRENT_OFFER || !CURRENT_OFFER.selectedTests || CURRENT_OFFER.selectedTests.length === 0){
+document.getElementById("testPriceEditArea").classList.add("hidden");
+return;
+}
+
+let html = `
+<h3>Seçilen Testlere Özel Fiyat</h3>
+<table>
+<tr>
+<th>Test</th>
+<th>Mevcut Fiyat</th>
+<th>Yeni Fiyat</th>
+</tr>
+`;
+
+CURRENT_OFFER.selectedTests.forEach((test,index)=>{
+
+html += `
+<tr>
+<td>${test.name}</td>
+<td>${test.price} TL</td>
+<td><input type="number" class="specialTestPrice" data-index="${index}" value="${test.finalPrice}"></td>
+</tr>
+`;
+
+});
+
+html += `
+</table>
+<button onclick="recalculateWithSpecialPrices()">Yeni Fiyatlarla Tekrar Hesapla</button>
+`;
+
+document.getElementById("testPriceEditArea").innerHTML = html;
+document.getElementById("testPriceEditArea").classList.remove("hidden");
+
+}
+
+function recalculateWithSpecialPrices(){
+
+if(!CURRENT_OFFER || !CURRENT_OFFER.selectedTests){
+return;
+}
+
+document.querySelectorAll(".specialTestPrice").forEach(input=>{
+
+const index = Number(input.dataset.index);
+const value = Number(input.value);
+
+if(CURRENT_OFFER.selectedTests[index]){
+CURRENT_OFFER.selectedTests[index].finalPrice = value;
+}
+
+});
+
+if(CURRENT_OFFER.type === "companyHealth"){
+
+const calculated =
+calculateCompanyTotal(CURRENT_OFFER.selectedTests,CURRENT_OFFER.count);
+
+CURRENT_OFFER.personPrice = calculated.personPrice;
+CURRENT_OFFER.total = calculated.total;
+CURRENT_OFFER.finalTotal = calculated.total;
+
+}
+
+if(CURRENT_OFFER.type === "personHealth"){
+
+const total =
+calculatePersonTotal(CURRENT_OFFER.selectedTests);
+
+CURRENT_OFFER.selectedCount =
+CURRENT_OFFER.selectedTests.length;
+
+CURRENT_OFFER.total = total;
+CURRENT_OFFER.finalTotal = total;
+
+}
+
+document.getElementById("discountInput").value = "";
+
+renderOffer();
+renderTestPriceEditor();
 
 }
 
@@ -441,12 +711,18 @@ document.getElementById("offerPreview").innerHTML = `
 
 }
 
-function showPreview(){
+function showPreview(showTestEditor){
 
 document.getElementById("offerPreview").classList.remove("hidden");
 document.getElementById("discountArea").classList.remove("hidden");
 document.getElementById("pdfButton").classList.remove("hidden");
 document.getElementById("discountInput").value = "";
+
+if(showTestEditor){
+document.getElementById("testPriceEditArea").classList.remove("hidden");
+}else{
+document.getElementById("testPriceEditArea").classList.add("hidden");
+}
 
 }
 
