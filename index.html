@@ -1,3 +1,6 @@
+index.html
+
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -12,6 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body>
 
 <div class="container">
@@ -19,35 +23,34 @@
 <h2>KOCAELİ OSGB Teklif Sistemi</h2>
 
 <select id="mainType">
-    <option value="">Teklif Türü Seçin</option>
-    <option value="service">Hizmet Teklifi</option>
-    <option value="health">Tahlil Teklifi</option>
+<option value="">Teklif Türü Seçin</option>
+<option value="service">Hizmet Teklifi</option>
 </select>
 
 <div id="serviceArea" class="hidden">
 
-    <input type="text" id="serviceFirma" placeholder="Firma Adı">
+<input type="text" id="serviceFirma" placeholder="Firma Adı">
 
-    <select id="dangerClass">
-        <option value="">Tehlike Sınıfı</option>
-        <option value="az">Az Tehlikeli</option>
-        <option value="tehlikeli">Tehlikeli</option>
-        <option value="cok">Çok Tehlikeli</option>
-    </select>
+<select id="dangerClass">
+<option value="">Tehlike Sınıfı</option>
+<option value="az">Az Tehlikeli</option>
+<option value="tehlikeli">Tehlikeli</option>
+<option value="cok">Çok Tehlikeli</option>
+</select>
 
-    <input type="number" id="serviceCount" placeholder="Çalışan Sayısı">
+<input type="number" id="serviceCount" placeholder="Çalışan Sayısı">
 
-    <button onclick="createServiceOffer()">
-        Hizmet Teklifi Oluştur
-    </button>
+<button onclick="createServiceOffer()">
+Hizmet Teklifi Oluştur
+</button>
 
 </div>
 
 <div id="offerPreview" class="offer hidden"></div>
 
 <div id="discountArea" class="discountBox hidden">
-    <label>İndirim yap:</label>
-    <input type="number" id="discountInput" placeholder="İndirim tutarı TL" oninput="applyDiscount()">
+<label>İndirim Yap:</label>
+<input type="number" id="discountInput" placeholder="İndirim tutarı TL" oninput="applyDiscount()">
 </div>
 
 <button id="pdfButton" class="hidden" onclick="downloadPDF()">
@@ -58,285 +61,329 @@ PDF İndir
 
 <div id="pdfTemplate" class="pdf-page hidden">
 
-    <img src="assets/antet.png" class="pdf-antet">
+<img src="assets/antet.png" class="pdf-antet">
 
-    <div class="pdf-header">
-        <img src="assets/logo.jpg" class="pdf-logo">
+<div class="pdf-header">
 
-        <div>
-            <h1>İŞ SAĞLIĞI VE GÜVENLİĞİ</h1>
-            <h2>HİZMET TEKLİFİ</h2>
-        </div>
-    </div>
+<img src="assets/logo.jpg" class="pdf-logo">
 
-    <table class="pdf-table">
+<div>
+<h1>İŞ SAĞLIĞI VE GÜVENLİĞİ</h1>
+<h2>HİZMET TEKLİFİ</h2>
+</div>
 
-        <tr>
-            <th>Firma</th>
-            <td id="pdfFirma"></td>
-        </tr>
+</div>
 
-        <tr>
-            <th>Tehlike Sınıfı</th>
-            <td id="pdfDanger"></td>
-        </tr>
+<table class="pdf-table">
 
-        <tr>
-            <th>Çalışan Sayısı</th>
-            <td id="pdfCount"></td>
-        </tr>
+<tr>
+<th>Firma</th>
+<td id="pdfFirma"></td>
+</tr>
 
-        <tr>
-            <th>Uzman Süresi</th>
-            <td id="pdfUzman"></td>
-        </tr>
+<tr>
+<th>Tehlike Sınıfı</th>
+<td id="pdfDanger"></td>
+</tr>
 
-        <tr>
-            <th>Hekim Süresi</th>
-            <td id="pdfHekim"></td>
-        </tr>
+<tr>
+<th>Çalışan Sayısı</th>
+<td id="pdfCount"></td>
+</tr>
 
-        <tr>
-            <th>Aylık Ücret</th>
-            <td id="pdfTotal"></td>
-        </tr>
+<tr>
+<th>Uzman Süresi</th>
+<td id="pdfUzman"></td>
+</tr>
 
-        <tr>
-            <th>Geçerlilik</th>
-            <td id="pdfValid"></td>
-        </tr>
+<tr>
+<th>Hekim Süresi</th>
+<td id="pdfHekim"></td>
+</tr>
 
-    </table>
+<tr>
+<th>Aylık Ücret</th>
+<td id="pdfTotal"></td>
+</tr>
 
-    <div class="pdf-text">
-        Yukarıda belirtilen ücretler belirtilen tarihine kadar geçerlidir.<br>
-        Fiyatlara KDV dahil değildir.<br><br>
-        Teklifimizi değerlendirmelerinize sunar, işlerinizde başarılar dileriz.
-    </div>
+<tr>
+<th>Geçerlilik</th>
+<td id="pdfValid"></td>
+</tr>
 
-    <div class="pdf-sign-area">
-        <img src="assets/imza.png" class="pdf-sign">
-    </div>
+</table>
+
+<div class="pdf-text">
+Yukarıda belirtilen ücretler belirtilen tarihine kadar geçerlidir.<br>
+Fiyatlara KDV dahil değildir.<br><br>
+Teklifimizi değerlendirmelerinize sunar, işlerinizde başarılar dileriz.
+</div>
+
+<div class="pdf-sign-area">
+<img src="assets/imza.png" class="pdf-sign">
+</div>
 
 </div>
 
 <script>
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPVorKZQwmX6hv/export?format=csv";
+const SHEET_URL =
+"https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPVorKZQwmX6hv/export?format=csv";
 
 let PRICES = {};
 let CURRENT_OFFER = null;
 
 async function loadPrices(){
 
-    const response = await fetch(SHEET_URL);
-    const text = await response.text();
-    const rows = text.split("\n");
+const response = await fetch(SHEET_URL);
 
-    rows.slice(1).forEach(row=>{
+const text = await response.text();
 
-        const cols = row.split(",");
+const rows = text.split("\n");
 
-        if(cols.length >= 2){
-            PRICES[cols[0].trim()] = Number(cols[1].trim());
-        }
+rows.slice(1).forEach(row=>{
 
-    });
+const cols = row.split(",");
+
+if(cols.length >= 2){
+
+PRICES[cols[0].trim()] =
+Number(cols[1].trim());
+
+}
+
+});
 
 }
 
 loadPrices();
 
-const mainType = document.getElementById("mainType");
-const serviceArea = document.getElementById("serviceArea");
+document.getElementById("mainType")
+.addEventListener("change",function(){
 
-mainType.addEventListener("change",function(){
-
-    serviceArea.classList.add("hidden");
-
-    if(this.value === "service"){
-        serviceArea.classList.remove("hidden");
-    }
+document.getElementById("serviceArea")
+.classList.remove("hidden");
 
 });
 
 function createServiceOffer(){
 
-    const firma = document.getElementById("serviceFirma").value;
-    const danger = document.getElementById("dangerClass").value;
-    const count = Number(document.getElementById("serviceCount").value);
+const firma =
+document.getElementById("serviceFirma").value;
 
-    let base = 0;
-    let extra = 0;
+const danger =
+document.getElementById("dangerClass").value;
 
-    let uzman = 0;
-    let hekim = 0;
+const count =
+Number(document.getElementById("serviceCount").value);
 
-    let dangerText = "";
+let base = 0;
+let extra = 0;
 
-    if(danger === "az"){
+let uzman = 0;
+let hekim = 0;
 
-        base = PRICES["hizmet_az_tehlikeli_sabit"];
-        extra = PRICES["hizmet_az_tehlikeli_ek"];
+let dangerText = "";
 
-        uzman = 10;
-        hekim = 5;
+if(danger === "az"){
 
-        dangerText = "Az Tehlikeli";
+base = PRICES["hizmet_az_tehlikeli_sabit"];
+extra = PRICES["hizmet_az_tehlikeli_ek"];
 
-    }
+uzman = 10;
+hekim = 5;
 
-    if(danger === "tehlikeli"){
+dangerText = "Az Tehlikeli";
 
-        base = PRICES["hizmet_tehlikeli_sabit"];
-        extra = PRICES["hizmet_tehlikeli_ek"];
+}
 
-        uzman = 20;
-        hekim = 10;
+if(danger === "tehlikeli"){
 
-        dangerText = "Tehlikeli";
+base = PRICES["hizmet_tehlikeli_sabit"];
+extra = PRICES["hizmet_tehlikeli_ek"];
 
-    }
+uzman = 20;
+hekim = 10;
 
-    if(danger === "cok"){
+dangerText = "Tehlikeli";
 
-        base = PRICES["hizmet_cok_tehlikeli_sabit"];
-        extra = PRICES["hizmet_cok_tehlikeli_ek"];
+}
 
-        uzman = 40;
-        hekim = 15;
+if(danger === "cok"){
 
-        dangerText = "Çok Tehlikeli";
+base = PRICES["hizmet_cok_tehlikeli_sabit"];
+extra = PRICES["hizmet_cok_tehlikeli_ek"];
 
-    }
+uzman = 40;
+hekim = 15;
 
-    let total = base;
+dangerText = "Çok Tehlikeli";
 
-    if(count > 5){
-        total += (count - 5) * extra;
-    }
+}
 
-    const uzmanSure = count * uzman;
-    const hekimSure = count * hekim;
+let total = base;
 
-    const year = new Date().getFullYear();
+if(count > 5){
 
-    CURRENT_OFFER = {
-        firma,
-        dangerText,
-        count,
-        uzmanSure,
-        hekimSure,
-        total,
-        finalTotal: total,
-        validDate: "31/12/" + year
-    };
+total +=
+(count - 5) * extra;
 
-    renderOffer();
-    showPreview();
+}
+
+const uzmanSure =
+count * uzman;
+
+const hekimSure =
+count * hekim;
+
+const year =
+new Date().getFullYear();
+
+CURRENT_OFFER = {
+
+firma,
+dangerText,
+count,
+uzmanSure,
+hekimSure,
+total,
+finalTotal: total,
+validDate: "31/12/" + year
+
+};
+
+renderOffer();
+showPreview();
 
 }
 
 function applyDiscount(){
 
-    if(!CURRENT_OFFER){
-        return;
-    }
+if(!CURRENT_OFFER){
+return;
+}
 
-    const discount = Number(document.getElementById("discountInput").value) || 0;
+const discount =
+Number(document.getElementById("discountInput").value) || 0;
 
-    let finalTotal = CURRENT_OFFER.total - discount;
+let finalTotal =
+CURRENT_OFFER.total - discount;
 
-    if(finalTotal < 0){
-        finalTotal = 0;
-    }
+if(finalTotal < 0){
+finalTotal = 0;
+}
 
-    CURRENT_OFFER.finalTotal = finalTotal;
+CURRENT_OFFER.finalTotal = finalTotal;
 
-    renderOffer();
+renderOffer();
 
 }
 
 function renderOffer(){
 
-    document.getElementById("offerPreview").innerHTML = `
+document.getElementById("offerPreview")
+.innerHTML = `
 
-    <h1>HİZMET TEKLİFİ</h1>
+<h1>HİZMET TEKLİFİ</h1>
 
-    <table>
+<table>
 
-    <tr>
-    <th>Firma</th>
-    <td>${CURRENT_OFFER.firma}</td>
-    </tr>
+<tr>
+<th>Firma</th>
+<td>${CURRENT_OFFER.firma}</td>
+</tr>
 
-    <tr>
-    <th>Tehlike Sınıfı</th>
-    <td>${CURRENT_OFFER.dangerText}</td>
-    </tr>
+<tr>
+<th>Tehlike Sınıfı</th>
+<td>${CURRENT_OFFER.dangerText}</td>
+</tr>
 
-    <tr>
-    <th>Çalışan Sayısı</th>
-    <td>${CURRENT_OFFER.count}</td>
-    </tr>
+<tr>
+<th>Çalışan Sayısı</th>
+<td>${CURRENT_OFFER.count}</td>
+</tr>
 
-    <tr>
-    <th>Toplam Tutar</th>
-    <td>${CURRENT_OFFER.finalTotal} TL</td>
-    </tr>
+<tr>
+<th>Toplam Tutar</th>
+<td>${CURRENT_OFFER.finalTotal} TL</td>
+</tr>
 
-    </table>
-    `;
+</table>
+`;
 
 }
 
 function showPreview(){
 
-    document.getElementById("offerPreview").classList.remove("hidden");
-    document.getElementById("pdfButton").classList.remove("hidden");
-    document.getElementById("discountArea").classList.remove("hidden");
+document.getElementById("offerPreview")
+.classList.remove("hidden");
 
-    document.getElementById("discountInput").value = "";
+document.getElementById("discountArea")
+.classList.remove("hidden");
+
+document.getElementById("pdfButton")
+.classList.remove("hidden");
 
 }
 
 async function downloadPDF(){
 
-    document.getElementById("pdfFirma").innerText = CURRENT_OFFER.firma;
-    document.getElementById("pdfDanger").innerText = CURRENT_OFFER.dangerText;
-    document.getElementById("pdfCount").innerText = CURRENT_OFFER.count;
-    document.getElementById("pdfUzman").innerText = CURRENT_OFFER.uzmanSure + " dk";
-    document.getElementById("pdfHekim").innerText = CURRENT_OFFER.hekimSure + " dk";
-    document.getElementById("pdfTotal").innerText = CURRENT_OFFER.finalTotal + " TL";
-    document.getElementById("pdfValid").innerText = CURRENT_OFFER.validDate;
+document.getElementById("pdfFirma").innerText =
+CURRENT_OFFER.firma;
 
-    const element = document.getElementById("pdfTemplate");
+document.getElementById("pdfDanger").innerText =
+CURRENT_OFFER.dangerText;
 
-    element.classList.remove("hidden");
+document.getElementById("pdfCount").innerText =
+CURRENT_OFFER.count;
 
-    const canvas = await html2canvas(element,{scale:2});
+document.getElementById("pdfUzman").innerText =
+CURRENT_OFFER.uzmanSure + " dk";
 
-    element.classList.add("hidden");
+document.getElementById("pdfHekim").innerText =
+CURRENT_OFFER.hekimSure + " dk";
 
-    const imgData = canvas.toDataURL("image/png");
+document.getElementById("pdfTotal").innerText =
+CURRENT_OFFER.finalTotal + " TL";
 
-    const { jsPDF } = window.jspdf;
+document.getElementById("pdfValid").innerText =
+CURRENT_OFFER.validDate;
 
-    const pdf = new jsPDF("p","mm","a4");
+const element =
+document.getElementById("pdfTemplate");
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+element.classList.remove("hidden");
 
-    pdf.addImage(
-        imgData,
-        "PNG",
-        0,
-        0,
-        pdfWidth,
-        pdfHeight
-    );
+const canvas =
+await html2canvas(element,{scale:2});
 
-    pdf.save("teklif.pdf");
+element.classList.add("hidden");
+
+const imgData =
+canvas.toDataURL("image/png");
+
+const { jsPDF } =
+window.jspdf;
+
+const pdf =
+new jsPDF("p","mm","a4");
+
+const pdfWidth =
+pdf.internal.pageSize.getWidth();
+
+const pdfHeight =
+(canvas.height * pdfWidth) / canvas.width;
+
+pdf.addImage(
+imgData,
+"PNG",
+0,
+0,
+pdfWidth,
+pdfHeight
+);
+
+pdf.save("teklif.pdf");
 
 }
 
@@ -345,136 +392,3 @@ async function downloadPDF(){
 </body>
 </html>
 ```
-body{
-    font-family: Arial, sans-serif;
-    background:#f2f2f2;
-    padding:20px;
-}
-
-.container{
-    max-width:800px;
-    margin:auto;
-    background:white;
-    padding:20px;
-    border-radius:10px;
-}
-
-input,select{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    box-sizing:border-box;
-}
-
-button{
-    width:100%;
-    padding:12px;
-    margin-top:15px;
-    cursor:pointer;
-}
-
-.hidden{
-    display:none;
-}
-
-.offer{
-    background:white;
-    color:black;
-    padding:40px;
-    margin-top:30px;
-}
-
-.offer table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-}
-
-.offer table,
-.offer th,
-.offer td{
-    border:1px solid black;
-}
-
-.offer th,
-.offer td{
-    padding:10px;
-    text-align:left;
-}
-
-.discountBox{
-    margin-top:20px;
-    padding:15px;
-    background:#f7f7f7;
-    border:1px solid #ddd;
-}
-```
-
-# pdf.css
-
-```css
-.pdf-page{
-    width:794px;
-    background:white;
-    padding:40px;
-    color:black;
-}
-
-.pdf-antet{
-    width:100%;
-    margin-bottom:20px;
-}
-
-.pdf-header{
-    display:flex;
-    align-items:center;
-    gap:20px;
-    margin-bottom:30px;
-}
-
-.pdf-logo{
-    width:120px;
-}
-
-.pdf-header h1{
-    font-size:24px;
-    margin:0;
-}
-
-.pdf-header h2{
-    font-size:18px;
-    margin-top:5px;
-}
-
-.pdf-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-}
-
-.pdf-table,
-.pdf-table th,
-.pdf-table td{
-    border:1px solid black;
-}
-
-.pdf-table th,
-.pdf-table td{
-    padding:10px;
-    text-align:left;
-}
-
-.pdf-text{
-    margin-top:40px;
-    line-height:1.7;
-    font-size:14px;
-}
-
-.pdf-sign-area{
-    margin-top:80px;
-    text-align:right;
-}
-
-.pdf-sign{
-    width:220px;
-}
