@@ -879,6 +879,157 @@ document.getElementById("pdfTable").innerHTML = rows;
 
 }
 
+function createContractBlock(tag, className, text){
+
+const el = document.createElement(tag);
+
+if(className){
+el.className = className;
+}
+
+el.innerHTML = text;
+
+return el;
+
+}
+
+function getServiceContractBlocks(){
+
+const blocks = [];
+
+blocks.push(createContractBlock(
+"h1",
+"contract-main-title",
+"ORTAK SAĞLIK GÜVENLİK BİRİMİ HİZMETLERİ SÖZLEŞMESİ"
+));
+
+blocks.push(createContractBlock(
+"h2",
+"contract-section-title",
+"1) İş Güvenliği Kontrol Hizmetleri Kapsamı (İş Güvenliği Uzmanlığı)"
+));
+
+blocks.push(createContractBlock(
+"p",
+"",
+"İşyerinde İş Sağlığı ve Güvenliği uygulamalarının sağlanması için gerekli her türlü önlemin alınması için İŞVEREN'e önerilerde bulunmak,"
+));
+
+[
+"İşyerinde risk değerlendirmesi yapılması ve iş programı dikkate alınarak revize edilmesi,",
+"Projeye mahsus sağlık ve güvenlik planı hazırlanması ve İŞVEREN'e verilmesi,",
+"Çalışma ortamı gözetiminin yapılması ve iş güvenliği uygunsuzluklarının raporlanması,",
+"İşyerinde gerekliyse iş sağlığı ve güvenliği kurulu oluşturulması ve gerekli periyotlarda toplanarak bu kurulun çalışmalarının koordine edilmesi,",
+"Çalışanların kullandıkları veya kullanacakları kişisel koruyucu ekipmanların uygunluğunun kontrol edilmesi,",
+"İş kazaları ile ilgili her türlü resmi kayıtların tutulması ve İŞVEREN'e bildirimlerin yapılması,",
+"İş kazaları, ramak kala ve olayların incelenmesi ile ilgili kayıtların tutulması ve bir nüshasının İŞVEREN'e sunulması,",
+"Acil durum planlarının hazırlanması ve uygulamaya alınması,",
+"Yangın tatbikatlarının organizasyonu,",
+"İş Sağlığı ve Güvenliği Talimatlarının hazırlanması,",
+"İş Sağlığı ve Güvenliği Kontrol Formlarının oluşturulması,",
+"İhtiyaç duyulan dokümantasyon yapısının oluşturulması."
+].forEach(item=>{
+blocks.push(createContractBlock(
+"p",
+"contract-bullet",
+"• " + item
+));
+});
+
+blocks.push(createContractBlock(
+"h2",
+"contract-section-title",
+"2) İşyeri Hekimliği Hizmetleri Kapsamı"
+));
+
+[
+"İlk Yardım, Acil Tedavi ile Koruyucu Sağlık Hizmetlerinin yürütülmesi,",
+"İşçilerin işe girişlerinde ve işin devamı süresince çok tehlikeli sınıfta 1 yıl, tehlikeli sınıfta 2 yıl ve az tehlikeli sınıfta 3 yıl periyotlarla sağlık raporu ile belgelendirilmesi,",
+"Çalışanların işe girişlerinde ve periyodik olarak yaptırılması zorunlu olan sağlık tetkiklerinin tespiti ve yazılı olarak İŞVEREN'e bildirilmesi ve takibi,",
+"İş sağlığı ve güvenliği hizmetleri kapsamında çalışanların sağlık gözetimi ve çalışma ortamının gözetimi ile ilgili İŞVEREN'e rehberlik yapılması,",
+"İşyerinde yapılan çalışmalar ve yapılacak değişikliklerle ilgili mevzuata ve genel iş sağlığı kurallarına uygunluk konusunda İŞVEREN'e önerilerde bulunulması,",
+"Kantin, yemekhane, yatakhane, kreş, emzirme odaları, soyunma odaları, duş ve tuvaletler dahil işyeri bina ve eklentilerinin hijyen şartlarının izlenmesi,",
+"İş sağlığı ve güvenliğiyle ilgili alınması gereken tedbirlerin İŞVEREN'e yazılı olarak bildirilmesi,",
+"İşyerinde meydana gelen iş kazası ve meslek hastalıklarının nedenlerinin araştırılması ve tekrarlanmaması için önerilerde bulunulması."
+].forEach(item=>{
+blocks.push(createContractBlock(
+"p",
+"contract-bullet",
+"• " + item
+));
+});
+
+blocks.push(createContractBlock(
+"h2",
+"contract-section-title",
+"3) Diğer Sağlık Personeli (İşyeri Hemşireliği) Hizmetleri Kapsamı"
+));
+
+[
+"İş sağlığı ve güvenliği hizmetlerinin planlanması, değerlendirilmesi, izlenmesi ve yönlendirilmesinde işyeri hekimi ile birlikte çalışılması, veri toplanması ve gerekli kayıtların tutulması,",
+"Çalışanların sağlık ve çalışma öykülerinin işe giriş veya periyodik muayene formuna yazılması ve işyeri hekimi muayenesi sırasında hekime yardımcı olunması,",
+"Özel politika gerektiren grupların takip edilmesi ve gerekli sağlık muayenelerinin yaptırılmasının sağlanması,",
+"İlk yardım hizmetlerinin organizasyonu ve yürütümünde işyeri hekimi ile birlikte çalışılması,",
+"Çalışanların sağlık eğitiminde görev alınması,",
+"İşyeri bina ve eklentilerinin genel hijyen şartlarının izlenmesi ve denetlenmesinde işyeri hekimiyle birlikte çalışılması,",
+"İşyeri hekimince verilecek iş sağlığı ve güvenliği ile ilgili diğer görevlerin yürütülmesi,",
+"İşyerinde görevli çalışan temsilcisi ve destek elemanlarının çalışmalarına destek sağlanması ve bu kişilerle işbirliği yapılması."
+].forEach(item=>{
+blocks.push(createContractBlock(
+"p",
+"contract-bullet",
+"• " + item
+));
+});
+
+return blocks;
+
+}
+
+function createServiceContractPage(){
+
+const page = document.createElement("div");
+page.className = "pdf-page service-contract-page";
+
+page.innerHTML = `
+<img src="assets/antet.png" class="pdf-antet compact-antet">
+<div class="service-contract-flow"></div>
+`;
+
+return page;
+
+}
+
+function paginateServiceContract(template){
+
+const summaryPage = template.querySelector(".service-summary-page");
+const blocks = getServiceContractBlocks();
+
+let page = createServiceContractPage();
+let flow = page.querySelector(".service-contract-flow");
+template.insertBefore(page,summaryPage);
+
+blocks.forEach(block=>{
+
+const clone = block.cloneNode(true);
+flow.appendChild(clone);
+
+if(page.scrollHeight > page.clientHeight){
+
+flow.removeChild(clone);
+
+page = createServiceContractPage();
+flow = page.querySelector(".service-contract-flow");
+template.insertBefore(page,summaryPage);
+
+flow.appendChild(clone);
+
+}
+
+});
+
+}
+
 function buildServicePdfTemplate(){
 
 const template = document.getElementById("servicePdfTemplate");
@@ -929,56 +1080,6 @@ template.innerHTML = `
 </div>
 </div>
 
-<div class="pdf-page service-contract-page">
-<img src="assets/antet.png" class="pdf-antet compact-antet">
-<h1 class="contract-main-title">ORTAK SAĞLIK GÜVENLİK BİRİMİ HİZMETLERİ SÖZLEŞMESİ</h1>
-
-<h2 class="contract-section-title">1) İş Güvenliği Kontrol Hizmetleri Kapsamı (İş Güvenliği Uzmanlığı)</h2>
-<p>İşyerinde İş Sağlığı ve Güvenliği uygulamalarının sağlanması için gerekli her türlü önlemin alınması için İŞVEREN'e önerilerde bulunmak,</p>
-<ul class="contract-list">
-<li>İşyerinde risk değerlendirmesi yapılması ve iş programı dikkate alınarak revize edilmesi,</li>
-<li>Projeye mahsus sağlık ve güvenlik planı hazırlanması ve İŞVEREN'e verilmesi,</li>
-<li>Çalışma ortamı gözetiminin yapılması ve iş güvenliği uygunsuzluklarının raporlanması,</li>
-<li>İşyerinde gerekliyse iş sağlığı ve güvenliği kurulu oluşturulması ve gerekli periyotlarda toplanarak bu kurulun çalışmalarının koordine edilmesi,</li>
-<li>Çalışanların kullandıkları veya kullanacakları kişisel koruyucu ekipmanların uygunluğunun kontrol edilmesi,</li>
-<li>İş kazaları ile ilgili her türlü resmi kayıtların tutulması ve İŞVEREN'e bildirimlerin yapılması,</li>
-<li>İş kazaları, ramak kala ve olayların incelenmesi ile ilgili kayıtların tutulması ve bir nüshasının İŞVEREN'e sunulması,</li>
-<li>Acil durum planlarının hazırlanması ve uygulamaya alınması,</li>
-<li>Yangın tatbikatlarının organizasyonu,</li>
-<li>İş Sağlığı ve Güvenliği Talimatlarının hazırlanması,</li>
-<li>İş Sağlığı ve Güvenliği Kontrol Formlarının oluşturulması,</li>
-<li>İhtiyaç duyulan dokümantasyon yapısının oluşturulması.</li>
-</ul>
-</div>
-
-<div class="pdf-page service-contract-page">
-<img src="assets/antet.png" class="pdf-antet compact-antet">
-
-<h2 class="contract-section-title">2) İşyeri Hekimliği Hizmetleri Kapsamı</h2>
-<ul class="contract-list">
-<li>İlk Yardım, Acil Tedavi ile Koruyucu Sağlık Hizmetlerinin yürütülmesi,</li>
-<li>İşçilerin işe girişlerinde ve işin devamı süresince çok tehlikeli sınıfta 1 yıl, tehlikeli sınıfta 2 yıl ve az tehlikeli sınıfta 3 yıl periyotlarla sağlık raporu ile belgelendirilmesi,</li>
-<li>Çalışanların işe girişlerinde ve periyodik olarak yaptırılması zorunlu olan sağlık tetkiklerinin tespiti ve yazılı olarak İŞVEREN'e bildirilmesi ve takibi,</li>
-<li>İş sağlığı ve güvenliği hizmetleri kapsamında çalışanların sağlık gözetimi ve çalışma ortamının gözetimi ile ilgili İŞVEREN'e rehberlik yapılması,</li>
-<li>İşyerinde yapılan çalışmalar ve yapılacak değişikliklerle ilgili mevzuata ve genel iş sağlığı kurallarına uygunluk konusunda İŞVEREN'e önerilerde bulunulması,</li>
-<li>Kantin, yemekhane, yatakhane, kreş, emzirme odaları, soyunma odaları, duş ve tuvaletler dahil işyeri bina ve eklentilerinin hijyen şartlarının izlenmesi,</li>
-<li>İş sağlığı ve güvenliğiyle ilgili alınması gereken tedbirlerin İŞVEREN'e yazılı olarak bildirilmesi,</li>
-<li>İşyerinde meydana gelen iş kazası ve meslek hastalıklarının nedenlerinin araştırılması ve tekrarlanmaması için önerilerde bulunulması.</li>
-</ul>
-
-<h2 class="contract-section-title">3) Diğer Sağlık Personeli (İşyeri Hemşireliği) Hizmetleri Kapsamı</h2>
-<ul class="contract-list">
-<li>İş sağlığı ve güvenliği hizmetlerinin planlanması, değerlendirilmesi, izlenmesi ve yönlendirilmesinde işyeri hekimi ile birlikte çalışılması, veri toplanması ve gerekli kayıtların tutulması,</li>
-<li>Çalışanların sağlık ve çalışma öykülerinin işe giriş veya periyodik muayene formuna yazılması ve işyeri hekimi muayenesi sırasında hekime yardımcı olunması,</li>
-<li>Özel politika gerektiren grupların takip edilmesi ve gerekli sağlık muayenelerinin yaptırılmasının sağlanması,</li>
-<li>İlk yardım hizmetlerinin organizasyonu ve yürütümünde işyeri hekimi ile birlikte çalışılması,</li>
-<li>Çalışanların sağlık eğitiminde görev alınması,</li>
-<li>İşyeri bina ve eklentilerinin genel hijyen şartlarının izlenmesi ve denetlenmesinde işyeri hekimiyle birlikte çalışılması,</li>
-<li>İşyeri hekimince verilecek iş sağlığı ve güvenliği ile ilgili diğer görevlerin yürütülmesi,</li>
-<li>İşyerinde görevli çalışan temsilcisi ve destek elemanlarının çalışmalarına destek sağlanması ve bu kişilerle işbirliği yapılması.</li>
-</ul>
-</div>
-
 <div class="pdf-page service-summary-page">
 <img src="assets/antet.png" class="pdf-antet compact-antet">
 
@@ -1013,6 +1114,8 @@ Saygılarımızla
 
 `;
 
+paginateServiceContract(template);
+
 }
 
 async function addElementToPdf(pdf, element, isFirstPage){
@@ -1037,10 +1140,10 @@ pdf.addImage(imgData,"PNG",0,0,pdfWidth,pdfHeight);
 
 async function downloadServicePDF(){
 
-buildServicePdfTemplate();
-
 const template = document.getElementById("servicePdfTemplate");
 template.classList.remove("hidden");
+
+buildServicePdfTemplate();
 
 const { jsPDF } = window.jspdf;
 const pdf = new jsPDF("p","mm","a4");
