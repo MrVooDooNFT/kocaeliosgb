@@ -1003,11 +1003,20 @@ return page;
 function paginateServiceContract(template){
 
 const summaryPage = template.querySelector(".service-summary-page");
-const blocks = getServiceContractBlocks();
+
+const summaryBlocks = Array.from(
+summaryPage.querySelectorAll(
+".summary-title-block, .service-info-table, .service-price-table, .service-note-box, .service-signature-block"
+)
+).map(item=>item.cloneNode(true));
+
+summaryPage.remove();
+
+const blocks = getServiceContractBlocks().concat(summaryBlocks);
 
 let page = createServiceContractPage();
 let flow = page.querySelector(".service-contract-flow");
-template.insertBefore(page,summaryPage);
+template.appendChild(page);
 
 blocks.forEach(block=>{
 
@@ -1020,7 +1029,7 @@ flow.removeChild(clone);
 
 page = createServiceContractPage();
 flow = page.querySelector(".service-contract-flow");
-template.insertBefore(page,summaryPage);
+template.appendChild(page);
 
 flow.appendChild(clone);
 
