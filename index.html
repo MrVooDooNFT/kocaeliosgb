@@ -22,6 +22,7 @@
 <select id="mainType">
 <option value="">Teklif Türü Seçin</option>
 <option value="service">Hizmet Teklifi</option>
+<option value="health">Tahlil Teklifi</option>
 </select>
 
 <div id="serviceArea" class="hidden">
@@ -37,9 +38,40 @@
 
 <input type="number" id="serviceCount" placeholder="Çalışan Sayısı">
 
-<button onclick="createServiceOffer()">
-Hizmet Teklifi Oluştur
-</button>
+<button onclick="createServiceOffer()">Hizmet Teklifi Oluştur</button>
+
+</div>
+
+<div id="healthArea" class="hidden">
+
+<select id="healthType">
+<option value="">Seçim Yapın</option>
+<option value="company">Şirket</option>
+<option value="person">Şahıs</option>
+</select>
+
+<div id="companyArea" class="hidden">
+
+<input type="text" id="healthFirma" placeholder="Firma Adı">
+<input type="number" id="healthCount" placeholder="Çalışan Sayısı">
+
+<h3 style="margin-top:20px;">Testler</h3>
+<div id="companyTests"></div>
+
+<button onclick="createCompanyHealthOffer()">Teklif Oluştur</button>
+
+</div>
+
+<div id="personArea" class="hidden">
+
+<input type="text" id="personName" placeholder="Ad Soyad">
+
+<h3 style="margin-top:20px;">Testler</h3>
+<div id="personTests"></div>
+
+<button onclick="createPersonOffer()">Şahıs Teklifi Oluştur</button>
+
+</div>
 
 </div>
 
@@ -50,9 +82,7 @@ Hizmet Teklifi Oluştur
 <input type="number" id="discountInput" placeholder="İndirim tutarı TL" oninput="applyDiscount()">
 </div>
 
-<button id="pdfButton" class="hidden" onclick="downloadPDF()">
-PDF İndir
-</button>
+<button id="pdfButton" class="hidden" onclick="downloadPDF()">PDF İndir</button>
 
 </div>
 
@@ -61,54 +91,14 @@ PDF İndir
 <img src="assets/antet.png" class="pdf-antet">
 
 <div class="pdf-header">
-
 <img src="assets/logo.jpg" class="pdf-logo">
-
 <div>
 <h1>İŞ SAĞLIĞI VE GÜVENLİĞİ</h1>
-<h2>HİZMET TEKLİFİ</h2>
+<h2 id="pdfTitle">HİZMET TEKLİFİ</h2>
+</div>
 </div>
 
-</div>
-
-<table class="pdf-table">
-
-<tr>
-<th>Firma</th>
-<td id="pdfFirma"></td>
-</tr>
-
-<tr>
-<th>Tehlike Sınıfı</th>
-<td id="pdfDanger"></td>
-</tr>
-
-<tr>
-<th>Çalışan Sayısı</th>
-<td id="pdfCount"></td>
-</tr>
-
-<tr>
-<th>Uzman Süresi</th>
-<td id="pdfUzman"></td>
-</tr>
-
-<tr>
-<th>Hekim Süresi</th>
-<td id="pdfHekim"></td>
-</tr>
-
-<tr>
-<th>Aylık Ücret</th>
-<td id="pdfTotal"></td>
-</tr>
-
-<tr>
-<th>Geçerlilik</th>
-<td id="pdfValid"></td>
-</tr>
-
-</table>
+<table class="pdf-table" id="pdfTable"></table>
 
 <div class="pdf-text">
 Yukarıda belirtilen ücretler belirtilen tarihine kadar geçerlidir.<br>
@@ -124,18 +114,34 @@ Teklifimizi değerlendirmelerinize sunar, işlerinizde başarılar dileriz.
 
 <script>
 
-const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPVorKZQwmX6hv/export?format=csv";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPVorKZQwmX6hv/export?format=csv";
 
 let PRICES = {};
 let CURRENT_OFFER = null;
 
+const TEST_KEYS = [
+["EKG","test_ekg"],
+["SFT","test_sft"],
+["Oidio","test_oidio"],
+["Hemogram","test_hemogram"],
+["Akciğer","test_akciger"],
+["TİT","test_tit"],
+["AKŞ","test_aks"],
+["Üre","test_ure"],
+["Kreatinin","test_kreatinin"],
+["AST","test_ast"],
+["ALT","test_alt"],
+["HBS AG","test_hbsag"],
+["Anti HBS","test_antihbs"],
+["Anti HIV","test_antihiv"],
+["Tetanoz","test_tetanoz"],
+["Portör","test_portor"]
+];
+
 async function loadPrices(){
 
 const response = await fetch(SHEET_URL);
-
 const text = await response.text();
-
 const rows = text.split("\n");
 
 rows.slice(1).forEach(row=>{
@@ -143,101 +149,118 @@ rows.slice(1).forEach(row=>{
 const cols = row.split(",");
 
 if(cols.length >= 2){
-
-PRICES[cols[0].trim()] =
-Number(cols[1].trim());
-
+PRICES[cols[0].trim()] = Number(cols[1].trim());
 }
 
 });
+
+createTests();
+
+}
+
+function createTests(){
+
+let html = "";
+
+TEST_KEYS.forEach(test=>{
+
+html += `<label><input type="checkbox" class="testItem" data-key="${test[1]}" value="${test[1]}"> ${test[0]}</label><br>`;
+
+});
+
+document.getElementById("companyTests").innerHTML = html;
+document.getElementById("personTests").innerHTML = html;
 
 }
 
 loadPrices();
 
-document.getElementById("mainType")
-.addEventListener("change",function(){
+document.getElementById("mainType").addEventListener("change",function(){
 
-document.getElementById("serviceArea")
-.classList.remove("hidden");
+document.getElementById("serviceArea").classList.add("hidden");
+document.getElementById("healthArea").classList.add("hidden");
+
+document.getElementById("offerPreview").classList.add("hidden");
+document.getElementById("discountArea").classList.add("hidden");
+document.getElementById("pdfButton").classList.add("hidden");
+
+if(this.value === "service"){
+document.getElementById("serviceArea").classList.remove("hidden");
+}
+
+if(this.value === "health"){
+document.getElementById("healthArea").classList.remove("hidden");
+}
+
+});
+
+document.getElementById("healthType").addEventListener("change",function(){
+
+document.getElementById("companyArea").classList.add("hidden");
+document.getElementById("personArea").classList.add("hidden");
+
+document.getElementById("offerPreview").classList.add("hidden");
+document.getElementById("discountArea").classList.add("hidden");
+document.getElementById("pdfButton").classList.add("hidden");
+
+if(this.value === "company"){
+document.getElementById("companyArea").classList.remove("hidden");
+}
+
+if(this.value === "person"){
+document.getElementById("personArea").classList.remove("hidden");
+}
 
 });
 
 function createServiceOffer(){
 
-const firma =
-document.getElementById("serviceFirma").value;
-
-const danger =
-document.getElementById("dangerClass").value;
-
-const count =
-Number(document.getElementById("serviceCount").value);
+const firma = document.getElementById("serviceFirma").value;
+const danger = document.getElementById("dangerClass").value;
+const count = Number(document.getElementById("serviceCount").value);
 
 let base = 0;
 let extra = 0;
-
 let uzman = 0;
 let hekim = 0;
-
 let dangerText = "";
 
 if(danger === "az"){
-
 base = PRICES["hizmet_az_tehlikeli_sabit"];
 extra = PRICES["hizmet_az_tehlikeli_ek"];
-
 uzman = 10;
 hekim = 5;
-
 dangerText = "Az Tehlikeli";
-
 }
 
 if(danger === "tehlikeli"){
-
 base = PRICES["hizmet_tehlikeli_sabit"];
 extra = PRICES["hizmet_tehlikeli_ek"];
-
 uzman = 20;
 hekim = 10;
-
 dangerText = "Tehlikeli";
-
 }
 
 if(danger === "cok"){
-
 base = PRICES["hizmet_cok_tehlikeli_sabit"];
 extra = PRICES["hizmet_cok_tehlikeli_ek"];
-
 uzman = 40;
 hekim = 15;
-
 dangerText = "Çok Tehlikeli";
-
 }
 
 let total = base;
 
 if(count > 5){
-
-total +=
-(count - 5) * extra;
-
+total += (count - 5) * extra;
 }
 
-const uzmanSure =
-count * uzman;
-
-const hekimSure =
-count * hekim;
-
-const year =
-new Date().getFullYear();
+const uzmanSure = count * uzman;
+const hekimSure = count * hekim;
+const year = new Date().getFullYear();
 
 CURRENT_OFFER = {
-
+type:"service",
 firma,
 dangerText,
 count,
@@ -246,7 +269,98 @@ hekimSure,
 total,
 finalTotal: total,
 validDate: "31/12/" + year
+};
 
+renderOffer();
+showPreview();
+
+}
+
+function getMinimumPrice(count){
+
+if(count >= 1 && count <= 3){
+return PRICES["min_1_3"];
+}
+
+if(count >= 4 && count <= 6){
+return PRICES["min_4_6"];
+}
+
+if(count >= 7 && count <= 9){
+return PRICES["min_7_9"];
+}
+
+return PRICES["min_10_plus"];
+
+}
+
+function createCompanyHealthOffer(){
+
+const firma = document.getElementById("healthFirma").value;
+const count = Number(document.getElementById("healthCount").value);
+const checked = document.querySelectorAll("#companyArea .testItem:checked");
+
+let personPrice = 0;
+
+checked.forEach(item=>{
+personPrice += PRICES[item.dataset.key];
+});
+
+let total = personPrice * count;
+const minimumPrice = getMinimumPrice(count);
+
+if(total < minimumPrice){
+total = minimumPrice;
+}
+
+const shownPersonPrice = Math.round(total / count);
+
+const date = new Date();
+date.setMonth(date.getMonth() + 1);
+const finalDate = date.toLocaleDateString("tr-TR");
+
+CURRENT_OFFER = {
+type:"companyHealth",
+firma,
+count,
+personPrice: shownPersonPrice,
+total,
+finalTotal: total,
+validDate: finalDate
+};
+
+renderOffer();
+showPreview();
+
+}
+
+function createPersonOffer(){
+
+const name = document.getElementById("personName").value;
+const checked = document.querySelectorAll("#personArea .testItem:checked");
+const selectedCount = checked.length;
+
+let total = 0;
+
+if(selectedCount <= 7){
+total = PRICES["paket_" + selectedCount + "_test"] || 0;
+}else{
+checked.forEach(item=>{
+total += PRICES[item.dataset.key];
+});
+}
+
+const date = new Date();
+date.setMonth(date.getMonth() + 1);
+const finalDate = date.toLocaleDateString("tr-TR");
+
+CURRENT_OFFER = {
+type:"personHealth",
+name,
+selectedCount,
+total,
+finalTotal: total,
+validDate: finalDate
 };
 
 renderOffer();
@@ -260,11 +374,9 @@ if(!CURRENT_OFFER){
 return;
 }
 
-const discount =
-Number(document.getElementById("discountInput").value) || 0;
+const discount = Number(document.getElementById("discountInput").value) || 0;
 
-let finalTotal =
-CURRENT_OFFER.total - discount;
+let finalTotal = CURRENT_OFFER.total - discount;
 
 if(finalTotal < 0){
 finalTotal = 0;
@@ -272,114 +384,145 @@ finalTotal = 0;
 
 CURRENT_OFFER.finalTotal = finalTotal;
 
+if(CURRENT_OFFER.type === "companyHealth"){
+CURRENT_OFFER.personPrice = Math.round(CURRENT_OFFER.finalTotal / CURRENT_OFFER.count);
+}
+
 renderOffer();
 
 }
 
 function renderOffer(){
 
-document.getElementById("offerPreview")
-.innerHTML = `
+if(CURRENT_OFFER.type === "service"){
 
+document.getElementById("offerPreview").innerHTML = `
 <h1>HİZMET TEKLİFİ</h1>
-
 <table>
-
-<tr>
-<th>Firma</th>
-<td>${CURRENT_OFFER.firma}</td>
-</tr>
-
-<tr>
-<th>Tehlike Sınıfı</th>
-<td>${CURRENT_OFFER.dangerText}</td>
-</tr>
-
-<tr>
-<th>Çalışan Sayısı</th>
-<td>${CURRENT_OFFER.count}</td>
-</tr>
-
-<tr>
-<th>Toplam Tutar</th>
-<td>${CURRENT_OFFER.finalTotal} TL</td>
-</tr>
-
+<tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
+<tr><th>Tehlike Sınıfı</th><td>${CURRENT_OFFER.dangerText}</td></tr>
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Uzman Süresi</th><td>${CURRENT_OFFER.uzmanSure} dk</td></tr>
+<tr><th>Hekim Süresi</th><td>${CURRENT_OFFER.hekimSure} dk</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 </table>
 `;
 
 }
 
+if(CURRENT_OFFER.type === "companyHealth"){
+
+document.getElementById("offerPreview").innerHTML = `
+<h1>TAHLİL TEKLİFİ</h1>
+<table>
+<tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+</table>
+`;
+
+}
+
+if(CURRENT_OFFER.type === "personHealth"){
+
+document.getElementById("offerPreview").innerHTML = `
+<h1>ŞAHIS SAĞLIK TEKLİFİ</h1>
+<table>
+<tr><th>Ad Soyad</th><td>${CURRENT_OFFER.name}</td></tr>
+<tr><th>Seçilen Test Sayısı</th><td>${CURRENT_OFFER.selectedCount}</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+</table>
+`;
+
+}
+
+}
+
 function showPreview(){
 
-document.getElementById("offerPreview")
-.classList.remove("hidden");
+document.getElementById("offerPreview").classList.remove("hidden");
+document.getElementById("discountArea").classList.remove("hidden");
+document.getElementById("pdfButton").classList.remove("hidden");
+document.getElementById("discountInput").value = "";
 
-document.getElementById("discountArea")
-.classList.remove("hidden");
+}
 
-document.getElementById("pdfButton")
-.classList.remove("hidden");
+function buildPdfTemplate(){
+
+let title = "";
+let rows = "";
+
+if(CURRENT_OFFER.type === "service"){
+
+title = "HİZMET TEKLİFİ";
+
+rows = `
+<tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
+<tr><th>Tehlike Sınıfı</th><td>${CURRENT_OFFER.dangerText}</td></tr>
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Uzman Süresi</th><td>${CURRENT_OFFER.uzmanSure} dk</td></tr>
+<tr><th>Hekim Süresi</th><td>${CURRENT_OFFER.hekimSure} dk</td></tr>
+<tr><th>Aylık Ücret</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+`;
+
+}
+
+if(CURRENT_OFFER.type === "companyHealth"){
+
+title = "TAHLİL TEKLİFİ";
+
+rows = `
+<tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+`;
+
+}
+
+if(CURRENT_OFFER.type === "personHealth"){
+
+title = "ŞAHIS SAĞLIK TEKLİFİ";
+
+rows = `
+<tr><th>Ad Soyad</th><td>${CURRENT_OFFER.name}</td></tr>
+<tr><th>Seçilen Test Sayısı</th><td>${CURRENT_OFFER.selectedCount}</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+`;
+
+}
+
+document.getElementById("pdfTitle").innerText = title;
+document.getElementById("pdfTable").innerHTML = rows;
 
 }
 
 async function downloadPDF(){
 
-document.getElementById("pdfFirma").innerText =
-CURRENT_OFFER.firma;
+buildPdfTemplate();
 
-document.getElementById("pdfDanger").innerText =
-CURRENT_OFFER.dangerText;
-
-document.getElementById("pdfCount").innerText =
-CURRENT_OFFER.count;
-
-document.getElementById("pdfUzman").innerText =
-CURRENT_OFFER.uzmanSure + " dk";
-
-document.getElementById("pdfHekim").innerText =
-CURRENT_OFFER.hekimSure + " dk";
-
-document.getElementById("pdfTotal").innerText =
-CURRENT_OFFER.finalTotal + " TL";
-
-document.getElementById("pdfValid").innerText =
-CURRENT_OFFER.validDate;
-
-const element =
-document.getElementById("pdfTemplate");
+const element = document.getElementById("pdfTemplate");
 
 element.classList.remove("hidden");
 
-const canvas =
-await html2canvas(element,{scale:2});
+const canvas = await html2canvas(element,{scale:2});
 
 element.classList.add("hidden");
 
-const imgData =
-canvas.toDataURL("image/png");
+const imgData = canvas.toDataURL("image/png");
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("p","mm","a4");
 
-const { jsPDF } =
-window.jspdf;
+const pdfWidth = pdf.internal.pageSize.getWidth();
+const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-const pdf =
-new jsPDF("p","mm","a4");
-
-const pdfWidth =
-pdf.internal.pageSize.getWidth();
-
-const pdfHeight =
-(canvas.height * pdfWidth) / canvas.width;
-
-pdf.addImage(
-imgData,
-"PNG",
-0,
-0,
-pdfWidth,
-pdfHeight
-);
-
+pdf.addImage(imgData,"PNG",0,0,pdfWidth,pdfHeight);
 pdf.save("teklif.pdf");
 
 }
