@@ -1,34 +1,103 @@
 .pdf-wrapper{
+width:794px;
+margin:auto;
+background:#ffffff;
+font-family:Arial, Helvetica, sans-serif;
+color:#111;
+}
+
+.pdf-page{
+width:794px;
+min-height:1123px;
+padding:40px;
+box-sizing:border-box;
+position:relative;
+background:white;
+overflow:hidden;
+page-break-after:always;
+}
+
+.pdf-page:last-child{
+page-break-after:auto;
+}
+
+.pdf-antet{
+width:100%;
+display:block;
+margin-bottom:35px;
+}
+
+.cover-page{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.cover-logo{
+width:460px;
+max-width:100%;
+margin-top:120px;
+margin-bottom:50px;
+}
+
+.cover-title{
+font-size:32px;
+font-weight:700;
+text-align:center;
+line-height:1.7;
+letter-spacing:0.5px;
+margin-top:40px;
+}
+
+.cover-meta{
+margin-top:120px;
+font-size:42px;
+font-weight:700;
+color:#2a4ea1;
+letter-spacing:1px;
+}
+
+.contract-content{
+font-size:15px;
+line-height:1.7;
+}
+
+.contract-title{
+text-align:center;
+font-size:22px;
+font-weight:700;
+margin-bottom:40px;
+}
+
 .contract-section{
-margin-bottom:10mm;
-page-break-inside:avoid;
+margin-bottom:40px;
 }
 
 .contract-section h3{
-font-size:11pt;
-margin-bottom:5mm;
+font-size:18px;
+margin-bottom:18px;
 }
 
 .contract-section ul{
-padding-left:18px;
+padding-left:22px;
 margin:0;
 }
 
 .contract-section li{
-margin-bottom:3mm;
+margin-bottom:12px;
 }
 
 .summary-table{
 width:100%;
 border-collapse:collapse;
-margin-top:10mm;
-font-size:11pt;
+margin-top:30px;
+font-size:16px;
 }
 
 .summary-table th,
 .summary-table td{
 border:1px solid #444;
-padding:10px;
+padding:12px;
 text-align:center;
 vertical-align:middle;
 }
@@ -44,35 +113,65 @@ font-weight:700;
 }
 
 .summary-notes{
-margin-top:10mm;
-font-size:11pt;
+margin-top:30px;
+font-size:16px;
 line-height:1.8;
 }
 
 .summary-company{
-margin-top:16mm;
-font-size:18pt;
+margin-top:55px;
+font-size:32px;
 font-weight:500;
 text-align:center;
 }
 
 .summary-sign-row{
-margin-top:12mm;
+margin-top:40px;
 display:flex;
 justify-content:space-between;
 align-items:flex-end;
 }
 
 .summary-regards{
-font-size:12pt;
-margin-top:10mm;
+font-size:20px;
+margin-top:10px;
 }
 
 .pdf-sign{
-width:70mm;
+width:260px;
+}
+
+.pdf-table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+.pdf-table,
+.pdf-table th,
+.pdf-table td{
+border:1px solid black;
+}
+
+.pdf-table th,
+.pdf-table td{
+padding:10px;
+text-align:left;
+}
+
+.pdf-text{
+margin-top:40px;
+line-height:1.7;
+font-size:14px;
+}
+
+.pdf-sign-area{
+margin-top:80px;
+text-align:right;
 }
 
 @media print{
+
 body{
 margin:0;
 background:white;
@@ -82,4 +181,5 @@ background:white;
 margin:0;
 box-shadow:none;
 }
+
 }
