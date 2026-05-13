@@ -135,6 +135,8 @@ Teklifimizi değerlendirmelerinize sunar, işlerinizde başarılar dileriz.
 
 <div id="servicePdfTemplate" class="service-pdf-template hidden"></div>
 
+<div id="healthPdfTemplate" class="service-pdf-template hidden"></div>
+
 <script>
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1ZMFPlQMFzsPzVxFTEJUPVorKZQwmX6hv/export?format=csv";
@@ -1127,6 +1129,123 @@ paginateServiceContract(template);
 
 }
 
+
+function buildHealthPdfTemplate(){
+
+const template = document.getElementById("healthPdfTemplate");
+
+const sourceName =
+CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
+
+const today = new Date().toLocaleDateString("tr-TR");
+
+let tableRows = "";
+
+if(CURRENT_OFFER.type === "companyHealth"){
+
+tableRows = `
+<tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+${renderSelectedTestsForPdf()}
+`;
+}
+
+if(CURRENT_OFFER.type === "personHealth"){
+
+tableRows = `
+<tr><th>Ad Soyad</th><td>${CURRENT_OFFER.name}</td></tr>
+<tr><th>Seçilen Test Sayısı</th><td>${CURRENT_OFFER.selectedCount}</td></tr>
+<tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
+<tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
+${renderSelectedTestsForPdf()}
+`;
+}
+
+template.innerHTML = `
+
+<div class="pdf-page service-cover-page">
+<img src="assets/antet.png" class="service-cover-antet">
+
+<div class="service-cover-center">
+<img src="assets/logo.jpg" class="service-cover-logo">
+</div>
+
+<div class="service-cover-title">
+<div>İŞ SAĞLIĞI VE GÜVENLİĞİ</div>
+<div>TAHLİL TEKLİFİ</div>
+<div class="service-cover-meta">${sourceName}</div>
+</div>
+</div>
+
+<div class="pdf-page health-detail-page">
+
+<img src="assets/antet.png" class="pdf-antet compact-antet">
+
+<div class="health-content">
+
+<h1 class="health-main-title">TAHLİL TEKLİF DOSYASI</h1>
+
+<p><strong>Sayın Yetkili,</strong></p>
+
+<p>
+Sizler ile yapmış olduğumuz görüşme doğrultusunda aldığımız bilgiler ile hazırladığımız
+KOCAELİ OSGB merkezinde gerçekleştirilecek olan işe giriş tetkikleri ile ilgili fiyat teklifimiz
+ek’te tarafınıza sunulmaktadır.
+</p>
+
+<p>
+KOCAELİ OSGB olarak bizler, hızlı ve güvenilir aksiyonlarla sizlere hizmet sunarak iş ortaklığına hazır olduğumuzu bildirir,
+işbirliğimizin sürekli, verimli ve başarılı olmasını dileriz.
+</p>
+
+<p><strong>Saygılarımızla;</strong><br>KOCAELİ OSGB</p>
+
+<h2 class="health-section-title">1) Tanımlar, Hakkımızda</h2>
+
+<p>
+Bilindiği üzere 6331 sayılı iş sağlığı ve güvenliği kanunu ve ilgili yönetmelikler gereği iş yerlerinde çalışanların sağlık muayenelerinin yapılması yasal bir yükümlülüktür.
+</p>
+
+<p>
+20 yıllık tecrübelerimiz, uzman doktorlarımız ve mobil sağlık hizmet altyapımız ile hızlı ve güvenilir çözümler sunmaktayız.
+</p>
+
+<h2 class="health-section-title">2) Hizmet Planı, Teklif</h2>
+
+<p>
+Sağlık taraması organizasyonu için organizasyona katılan personellerin kayıt ve tetkik işlemleri planlanan sürelerde tamamlanacaktır.
+</p>
+
+<table class="pdf-table health-offer-table">
+${tableRows}
+</table>
+
+<div class="health-note-box">
+<p>• Peşin ödeme koşulları için hazırlanmıştır. Vadeli ödemelerde aylık %5 vade farkı uygulanmaktadır.</p>
+<p>• Teklif fiyatlarımıza KDV dahil değildir.</p>
+<p>• Fiyatlarımız teklif tarihinden 1 ay geçerlidir.</p>
+</div>
+
+<div class="service-signature-block">
+<div>
+<strong>Kocaeli Ortak Sağlık Güvenlik Birimi</strong><br>
+Saygılarımızla
+</div>
+<img src="assets/imza.png" class="service-signature-img">
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
 async function addElementToPdf(pdf, element, isFirstPage){
 
 const canvas = await html2canvas(element,{
@@ -1184,51 +1303,22 @@ pdf.save(`${firstWord}_ISG_Teklifi.pdf`);
 
 }
 
-function buildHealthCoverPage(){
-
-const sourceName =
-CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
-
-const cover = document.createElement("div");
-cover.className = "pdf-page service-cover-page";
-
-cover.innerHTML = `
-<img src="assets/antet.png" class="service-cover-antet">
-
-<div class="service-cover-center">
-<img src="assets/logo.jpg" class="service-cover-logo">
-<div class="service-cover-brand">KOCAELİ OSGB</div>
-</div>
-
-<div class="service-cover-title">
-<div>İŞ SAĞLIĞI VE GÜVENLİĞİ</div>
-<div>TAHLİL TEKLİFİ</div>
-<div class="service-cover-meta">${sourceName}</div>
-</div>
-`;
-
-return cover;
-
-}
-
 async function downloadHealthPDF(){
 
-buildPdfTemplate();
+const template = document.getElementById("healthPdfTemplate");
+template.classList.remove("hidden");
 
-const cover = buildHealthCoverPage();
-document.body.appendChild(cover);
-
-const element = document.getElementById("pdfTemplate");
-element.classList.remove("hidden");
+buildHealthPdfTemplate();
 
 const { jsPDF } = window.jspdf;
 const pdf = new jsPDF("p","mm","a4");
+const pages = template.querySelectorAll(".pdf-page");
 
-await addElementToPdf(pdf,cover,true);
-await addElementToPdf(pdf,element,false);
+for(let i = 0; i < pages.length; i++){
+await addElementToPdf(pdf,pages[i],i === 0);
+}
 
-document.body.removeChild(cover);
-element.classList.add("hidden");
+template.classList.add("hidden");
 
 const sourceName =
 CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
