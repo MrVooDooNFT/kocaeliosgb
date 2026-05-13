@@ -11,6 +11,106 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+.health-detail-page{
+padding:10mm 18mm 16mm 18mm;
+font-size:9.8px;
+line-height:1.42;
+overflow:hidden;
+box-sizing:border-box;
+}
+
+.health-detail-flow{
+width:100%;
+box-sizing:border-box;
+}
+
+.health-content{
+width:100%;
+box-sizing:border-box;
+}
+
+.health-content p{
+margin:0 0 2.4mm 0;
+text-align:left;
+}
+
+.health-main-title{
+font-size:15px;
+line-height:1.25;
+text-align:center;
+margin:0 0 5mm 0;
+font-weight:800;
+letter-spacing:.3px;
+}
+
+.health-section-title{
+font-size:12.4px;
+line-height:1.3;
+margin:5mm 0 2.5mm 0;
+font-weight:800;
+}
+
+.health-sub-title{
+font-size:11.5px;
+line-height:1.3;
+margin:4mm 0 2mm 0;
+font-weight:800;
+}
+
+.health-index-lines{
+font-weight:700;
+line-height:1.6;
+}
+
+.health-bullet-list{
+margin:0 0 4mm 0;
+padding-left:6mm;
+}
+
+.health-bullet-list li{
+margin:0 0 1.5mm 0;
+}
+
+.health-offer-table{
+margin-top:5mm;
+margin-bottom:5mm;
+font-size:9.8px;
+}
+
+.health-offer-table th,
+.health-offer-table td{
+padding:5px 7px;
+}
+
+.health-note-box{
+margin-top:5mm;
+border-left:3px solid #1d4f8f;
+padding:3mm 0 3mm 4mm;
+font-size:9.8px;
+line-height:1.45;
+}
+
+.health-note-box p{
+margin:0 0 1.5mm 0;
+}
+
+.health-signature-block{
+margin-top:8mm;
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+font-size:10px;
+line-height:1.45;
+}
+
+.health-signature-img{
+width:48mm;
+height:auto;
+}
+</style>
+
 </head>
 
 <body>
@@ -1130,14 +1230,53 @@ paginateServiceContract(template);
 }
 
 
+function createHealthDetailPage(){
+
+const page = document.createElement("div");
+page.className = "pdf-page health-detail-page";
+
+page.innerHTML = `
+<img src="assets/antet.png" class="pdf-antet compact-antet">
+<div class="health-detail-flow"></div>
+`;
+
+return page;
+
+}
+
+function paginateHealthDetail(template, blocks){
+
+let page = createHealthDetailPage();
+let flow = page.querySelector(".health-detail-flow");
+template.appendChild(page);
+
+blocks.forEach(block=>{
+
+const clone = block.cloneNode(true);
+flow.appendChild(clone);
+
+if(page.scrollHeight > page.clientHeight){
+
+flow.removeChild(clone);
+
+page = createHealthDetailPage();
+flow = page.querySelector(".health-detail-flow");
+template.appendChild(page);
+
+flow.appendChild(clone);
+
+}
+
+});
+
+}
+
 function buildHealthPdfTemplate(){
 
 const template = document.getElementById("healthPdfTemplate");
 
 const sourceName =
 CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
-
-const today = new Date().toLocaleDateString("tr-TR");
 
 let tableRows = "";
 
@@ -1171,6 +1310,7 @@ template.innerHTML = `
 
 <div class="service-cover-center">
 <img src="assets/logo.jpg" class="service-cover-logo">
+<div class="service-cover-brand">KOCAELİ OSGB</div>
 </div>
 
 <div class="service-cover-title">
@@ -1180,68 +1320,51 @@ template.innerHTML = `
 </div>
 </div>
 
-<div class="pdf-page health-detail-page">
+`;
 
-<img src="assets/antet.png" class="pdf-antet compact-antet">
-
-<div class="health-content">
-
+const wrapper = document.createElement("div");
+wrapper.className = "health-content";
+wrapper.innerHTML = `
 <h1 class="health-main-title">TAHLİL TEKLİF DOSYASI</h1>
 
-<p><strong>Sayın Yetkili,</strong></p>
-
-<p>
-Sizler ile yapmış olduğumuz görüşme doğrultusunda aldığımız bilgiler ile hazırladığımız
-KOCAELİ OSGB merkezinde gerçekleştirilecek olan işe giriş tetkikleri ile ilgili fiyat teklifimiz
-ek’te tarafınıza sunulmaktadır.
-</p>
-
-<p>
-KOCAELİ OSGB olarak bizler, hızlı ve güvenilir aksiyonlarla sizlere hizmet sunarak iş ortaklığına hazır olduğumuzu bildirir,
-işbirliğimizin sürekli, verimli ve başarılı olmasını dileriz.
-</p>
-
-<p><strong>Saygılarımızla;</strong><br>KOCAELİ OSGB</p>
-
-<h2 class="health-section-title">1) Tanımlar, Hakkımızda</h2>
-
-<p>
-Bilindiği üzere 6331 sayılı iş sağlığı ve güvenliği kanunu ve ilgili yönetmelikler gereği iş yerlerinde çalışanların sağlık muayenelerinin yapılması yasal bir yükümlülüktür.
-</p>
-
-<p>
-20 yıllık tecrübelerimiz, uzman doktorlarımız ve mobil sağlık hizmet altyapımız ile hızlı ve güvenilir çözümler sunmaktayız.
-</p>
-
-<h2 class="health-section-title">2) Hizmet Planı, Teklif</h2>
-
-<p>
-Sağlık taraması organizasyonu için organizasyona katılan personellerin kayıt ve tetkik işlemleri planlanan sürelerde tamamlanacaktır.
-</p>
+<p>Sayın Yetkili,<br>Sizler ile yapmış olduğumuz görüşme doğrultusunda aldığımız bilgiler ile hazırladığımız KOCAELİ OSGB merkezinde gerçekleştirilecek olan işe giriş tetkikleri ile ilgili fiyat teklifimiz ek’te tarafınıza sunulmaktadır.</p>
+<p>KOCAELİ OSGB olarak bizler, hızlı ve güvenilir aksiyonlarla sizlere hizmet sunarak iş ortaklığına hazır olduğumuzu bildirir, işbirliğimizin sürekli, verimli ve başarılı olmasını dileriz.</p>
+<p>Saygılarımızla;</p>
+<p>KOCAELİ OSGB</p>
+<h2 class="health-section-title">1)	Tanımlar, Hakkımızda<br>2)	Hizmet Planı, Teklif<br>3)	Belgeler, Referanslar</h2>
+<h2 class="health-section-title">1) Tanımlar, Hakkımızda;<br>Bilindiği üzere 6331 sayılı iş sağlığı ve güvenliği kanunu ve ilgili yönetmelikler gereği iş yerlerinde çalışanların sağlık muayenelerinin yapılması yasal bir yükümlülüktür Çalışanların sağlık kayıtlarının işe girişten itibaren başlanarak kanuni sürelerle yenilenmesi ve saklanması gerekmektedir.</h2>
+<p>Sağlık kontrollerinin zamanında yapılması oluşacak problemlerin önceden tespit edilmesini ve gerekli önlemlerin alınmasını sağlayacaktır. Yasal mevzuat gereği yaptırımların dışında unutulmamalıdır ki insan sağlığı her şeyden önemlidir, hele hele her an beraber saatlerinizi geçirdiğiniz çalışanlarınızın sağlıkları daha da önem arz etmektedir.</p>
+<p>Sağlık Bizim Asıl İşimiz;<br>20 yıllık tecrübelerimiz, konusunda uzman hemen hemen her branşta doktorlarımız ve sağlık personelimiz, ciddi sayılabilecek teknoloji, büyüklük ve düzeyde olan laboratuvarlarımız ve yine son teknoloji ürünü sağlık araç gereç ve ekipmanlarımız ile mobil sağlık hizmetleri de aslında bizim asli işimiz.</p>
+<p>Yukarıda saydığımız tüm detaylar ve tecrübeler sağlık kadar hassas bir konuda ne kadar önemliyse mobil sağlık hizmetleri ki tamamen insan sağlığının yine en ön planda olduğu bir sektör olmasından dolayı çok ama çok önemlidir.</p>
+<p>İşte bu hassasiyetimiz ışığında hazırlamış olduğumuz son teknoloji araçlarımız ile ve bu hizmeti arada hiçbir aracı olmadan birinci elden veriyor olmamızın beraberinde getirdiği uygun maliyet avantajları ile beraber aslında hastaneler bünyesindeki tüm doktor sağlık personeli laboratuvarlarımız ve ekipmanlarımızı sizlerin ayağına işyerlerinize evlerinize yani siz neredeyseniz oraya getiriyor gün ve saat planlamalarını beraberce yaparak mesai kayıplarının da önüne geçmiş oluyoruz.</p>
+<p>Bu bilgi ve tecrübeyi bir araya getirerek kurduğumuz KOCAELİ OSGB Uzman Kadrosu ve Kaliteli Hizmet anlayışıyla; doğru, güvenilir ve sağlıklı hizmet sunabilmek amacıyla Modernize edilmiş 3 Araçlık mobil sağlık filosu ve yerinde sağlık hizmetleri sunmak üzere hazır hale gelmiştir.</p>
+<p>Kurulduğu tarihten itibaren 100,000 i aşkın çalışana labaratuvarlarımızda ve mobil sağlık hizmeti sunan firmamız her geçen gün artan müşteri portföyü ve artan hizmet kalitesi ile siz değerli müşterilerine çözüm üretmeye devam etmektedir.</p>
+<p>Hizmetlerimiz;<br>•	Nitelikli personel görevlendirme ve danışmanlık,<br>•	Türkiye geneli yerinde Mobil Sağlık Taraması hizmeti,<br>•	İşe Giriş Muayene Tetkikleri ve Ek2 Formu,<br>•	Proje Bazlı Laboratuvar Kurulum Hizmeti,<br>•	Yerinde Donör alma hizmetleri,<br>•	Ambulans Hizmetleri,<br>•	Revir ve Medikal Malzeme Tedariği.</p>
+<h2 class="health-section-title">2)Hizmet Planı, Teklif</h2>
+<p>Hizmet Planı ;<br>Sağlık taraması organizasyonu için organizasyona katılan personellerin kayıt, aşağıda yazılı olan tetkik işlemleri sizlere işgücü ve zaman kaybı yaşatmaksızın 5 gün’lük sürede gerçekleştirilecek olup, 10 gün içinde tetkik sonuçları teslim edilecektir.</p>
 
 <table class="pdf-table health-offer-table">
 ${tableRows}
 </table>
 
-<div class="health-note-box">
-<p>• Peşin ödeme koşulları için hazırlanmıştır. Vadeli ödemelerde aylık %5 vade farkı uygulanmaktadır.</p>
-<p>• Teklif fiyatlarımıza KDV dahil değildir.</p>
-<p>• Fiyatlarımız teklif tarihinden 1 ay geçerlidir.</p>
-</div>
+<ul class="health-bullet-list">
+<li>Peşin ödeme koşulları için hazırlanmıştır. Vadeli ödemelerde aylık %5 vade farkı uygulanmaktadır.</li>
+<li>Teklif fiyatlarımıza KDV dahil değildir.</li>
+<li>Fiyatlarımız teklif tarihinden 1 ay geçerlidir</li>
+</ul>
 
-<div class="service-signature-block">
+<div class="health-signature-block">
 <div>
 <strong>Kocaeli Ortak Sağlık Güvenlik Birimi</strong><br>
 Saygılarımızla
 </div>
-<img src="assets/imza.png" class="service-signature-img">
+<img src="assets/imza.png" class="health-signature-img">
 </div>
-
-</div>
-
-</div>
-
 `;
+
+const blocks = Array.from(wrapper.children).map(item=>item.cloneNode(true));
+
+paginateHealthDetail(template, blocks);
 
 }
 
