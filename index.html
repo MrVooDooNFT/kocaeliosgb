@@ -109,6 +109,64 @@ line-height:1.45;
 width:48mm;
 height:auto;
 }
+
+.document-page{
+padding:12mm 14mm;
+box-sizing:border-box;
+position:relative;
+overflow:hidden;
+}
+
+.document-title{
+font-size:20px;
+font-weight:800;
+text-align:center;
+margin:0 0 10mm 0;
+letter-spacing:.3px;
+}
+
+.document-cert{
+position:absolute;
+width:92mm;
+height:auto;
+transform:rotate(-90deg);
+transform-origin:center center;
+box-shadow:0 4px 12px rgba(0,0,0,.15);
+border:1px solid #d9d9d9;
+background:#fff;
+}
+
+.document-cert-left{
+left:-8mm;
+top:88mm;
+}
+
+.document-cert-right{
+right:-8mm;
+top:150mm;
+}
+
+.reference-page{
+padding:10mm 12mm 12mm 12mm;
+box-sizing:border-box;
+overflow:hidden;
+}
+
+.reference-title{
+font-size:20px;
+font-weight:800;
+text-align:center;
+margin:0 0 6mm 0;
+}
+
+.reference-image{
+width:100%;
+max-height:250mm;
+object-fit:contain;
+display:block;
+margin:0 auto;
+}
+
 </style>
 
 </head>
@@ -1370,6 +1428,33 @@ Saygılarımızla
 const blocks = Array.from(wrapper.children).map(item=>item.cloneNode(true));
 
 paginateHealthDetail(template, blocks);
+
+const documentPage = document.createElement("div");
+documentPage.className = "pdf-page document-page";
+
+documentPage.innerHTML = `
+<img src="assets/antet.png" class="pdf-antet compact-antet">
+
+<h1 class="document-title">Belgelerimiz</h1>
+
+<img src="assets/b1.jpg" class="document-cert document-cert-left">
+<img src="assets/b2.jpg" class="document-cert document-cert-right">
+`;
+
+template.appendChild(documentPage);
+
+const referencePage = document.createElement("div");
+referencePage.className = "pdf-page reference-page";
+
+referencePage.innerHTML = `
+<img src="assets/antet.png" class="pdf-antet compact-antet">
+
+<h1 class="reference-title">Referanslarımızdan Bazıları</h1>
+
+<img src="assets/ref.png" class="reference-image">
+`;
+
+template.appendChild(referencePage);
 
 }
 
