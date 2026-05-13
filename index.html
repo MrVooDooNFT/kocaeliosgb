@@ -1184,18 +1184,52 @@ pdf.save(`${firstWord}_ISG_Teklifi.pdf`);
 
 }
 
+function buildHealthCoverPage(){
+
+const sourceName =
+CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
+
+const cover = document.createElement("div");
+cover.className = "pdf-page service-cover-page";
+
+cover.innerHTML = `
+<img src="assets/antet.png" class="service-cover-antet">
+
+<div class="service-cover-center">
+<img src="assets/logo.jpg" class="service-cover-logo">
+<div class="service-cover-brand">KOCAELİ OSGB</div>
+</div>
+
+<div class="service-cover-title">
+<div>İŞ SAĞLIĞI VE GÜVENLİĞİ</div>
+<div>TAHLİL TEKLİFİ</div>
+<div class="service-cover-meta">${sourceName}</div>
+</div>
+`;
+
+return cover;
+
+}
+
 async function downloadHealthPDF(){
 
 buildPdfTemplate();
+
+const cover = buildHealthCoverPage();
+document.body.appendChild(cover);
 
 const element = document.getElementById("pdfTemplate");
 element.classList.remove("hidden");
 
 const { jsPDF } = window.jspdf;
 const pdf = new jsPDF("p","mm","a4");
-await addElementToPdf(pdf,element,true);
 
+await addElementToPdf(pdf,cover,true);
+await addElementToPdf(pdf,element,false);
+
+document.body.removeChild(cover);
 element.classList.add("hidden");
+
 const sourceName =
 CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
 
