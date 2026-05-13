@@ -103,13 +103,14 @@ height:auto;
 }
 
 .service-cover-page{
-padding:0;
+padding:14mm 18mm 16mm 18mm;
 position:relative;
 }
 
 .service-cover-antet{
 width:100%;
 display:block;
+margin:0 0 10mm 0;
 }
 
 .service-cover-center{
