@@ -1163,7 +1163,24 @@ await addElementToPdf(pdf,pages[i],i === 0);
 }
 
 template.classList.add("hidden");
-pdf.save("hizmet-teklifi.pdf");
+const firstWord = CURRENT_OFFER.firma
+.trim()
+.split(" ")[0]
+.replace(/ç/g,"c")
+.replace(/Ç/g,"C")
+.replace(/ğ/g,"g")
+.replace(/Ğ/g,"G")
+.replace(/ı/g,"i")
+.replace(/İ/g,"I")
+.replace(/ö/g,"o")
+.replace(/Ö/g,"O")
+.replace(/ş/g,"s")
+.replace(/Ş/g,"S")
+.replace(/ü/g,"u")
+.replace(/Ü/g,"U")
+.replace(/[^a-zA-Z0-9]/g,"_");
+
+pdf.save(`${firstWord}_ISG_Teklifi.pdf`);
 
 }
 
@@ -1179,7 +1196,27 @@ const pdf = new jsPDF("p","mm","a4");
 await addElementToPdf(pdf,element,true);
 
 element.classList.add("hidden");
-pdf.save("teklif.pdf");
+const sourceName =
+CURRENT_OFFER.firma || CURRENT_OFFER.name || "Teklif";
+
+const firstWord = sourceName
+.trim()
+.split(" ")[0]
+.replace(/ç/g,"c")
+.replace(/Ç/g,"C")
+.replace(/ğ/g,"g")
+.replace(/Ğ/g,"G")
+.replace(/ı/g,"i")
+.replace(/İ/g,"I")
+.replace(/ö/g,"o")
+.replace(/Ö/g,"O")
+.replace(/ş/g,"s")
+.replace(/Ş/g,"S")
+.replace(/ü/g,"u")
+.replace(/Ü/g,"U")
+.replace(/[^a-zA-Z0-9]/g,"_");
+
+pdf.save(`${firstWord}_ISG_Teklifi.pdf`);
 
 }
 
