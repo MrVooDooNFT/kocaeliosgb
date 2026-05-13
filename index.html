@@ -1130,7 +1130,7 @@ paginateServiceContract(template);
 async function addElementToPdf(pdf, element, isFirstPage){
 
 const canvas = await html2canvas(element,{
-scale:1,
+scale:1.5,
 useCORS:true,
 backgroundColor:"#ffffff"
 });
