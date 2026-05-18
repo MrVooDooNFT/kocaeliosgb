@@ -853,7 +853,8 @@ finalTotal: total,
 validDate: "31/12/" + year,
 selectedTests:[],
 showUnitPrices:false,
-serviceRows:serviceRows
+serviceRows:serviceRows,
+note:document.getElementById("serviceSpecialNote") ? document.getElementById("serviceSpecialNote").value.trim() : ""
 };
 
 renderOffer();
@@ -1833,6 +1834,14 @@ template.innerHTML = `
 <table class="service-price-table">
 ${tableRows}
 </table>
+
+
+${CURRENT_OFFER.note ? `
+<div class="service-special-note">
+<strong>NOT:</strong><br>
+${CURRENT_OFFER.note}
+</div>
+` : ""}
 
 <div class="service-note-box">
 <p>Yukarıda belirtilen ücretler ${CURRENT_OFFER.validDate} tarihine kadar geçerlidir.</p>
