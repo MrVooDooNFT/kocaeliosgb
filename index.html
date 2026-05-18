@@ -411,7 +411,13 @@ let html = "";
 
 TEST_KEYS.forEach(test=>{
 
-html += `<label><input type="checkbox" class="testItem" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}"> ${test[0]}</label><br>`;
+html += `
+<label class="testItem">
+<span>${test[0]}</span>
+<span class="testLine"></span>
+<input type="checkbox" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}">
+</label>
+`;
 
 });
 
@@ -553,11 +559,11 @@ let customList;
 let customAreaSelector;
 
 if(type === "company"){
-areaSelector = "#companyArea .testItem:checked";
+areaSelector = "#companyArea .testItem input:checked";
 customList = CUSTOM_COMPANY_TESTS;
 customAreaSelector = "#companyArea .customTestItem:checked";
 }else{
-areaSelector = "#personArea .testItem:checked";
+areaSelector = "#personArea .testItem input:checked";
 customList = CUSTOM_PERSON_TESTS;
 customAreaSelector = "#personArea .customTestItem:checked";
 }
