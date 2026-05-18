@@ -465,6 +465,7 @@ function hideOutputs(){
 
 document.getElementById("offerPreview").classList.add("hidden");
 document.getElementById("testPriceEditArea").classList.add("hidden");
+document.getElementById("serviceSpecialPriceEditArea").classList.add("hidden");
 document.getElementById("discountArea").classList.add("hidden");
 document.getElementById("pdfButton").classList.add("hidden");
 
@@ -748,6 +749,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"İşyeri Hekimi",
 count:count,
+perPerson:PRICES[config.hekimPriceKey] || 0,
 duration:hekimSure + " dk / ay",
 price:price
 });
@@ -761,6 +763,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"İş Güvenliği Uzmanı",
 count:count,
+perPerson:PRICES[config.uzmanPriceKey] || 0,
 duration:uzmanSure + " dk / ay",
 price:price
 });
@@ -774,6 +777,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı C Sınıfı",
 count:"-",
+perPerson:"-",
 duration:"Tam zamanlı",
 price:price
 });
@@ -787,6 +791,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı B Sınıfı",
 count:"-",
+perPerson:"-",
 duration:"Tam zamanlı",
 price:price
 });
@@ -800,6 +805,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı A Sınıfı",
 count:"-",
+perPerson:"-",
 duration:"Tam zamanlı",
 price:price
 });
@@ -813,6 +819,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İşyeri Hekimi",
 count:"-",
+perPerson:"-",
 duration:"Tam zamanlı",
 price:price
 });
@@ -826,6 +833,7 @@ serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı D.S.P.",
 count:"-",
+perPerson:"-",
 duration:"Tam zamanlı",
 price:price
 });
@@ -1107,6 +1115,7 @@ rows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td>${row.price} TL / Ay</td>
 </tr>
@@ -1174,9 +1183,10 @@ renderTestPriceEditor();
 }
 
 
+
 function renderServiceSpecialPriceEditor(){
 
-if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial"){
+if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial" || !CURRENT_OFFER.serviceRows){
 document.getElementById("serviceSpecialPriceEditArea").classList.add("hidden");
 return;
 }
@@ -1191,29 +1201,17 @@ let html = `
 </tr>
 `;
 
-if(CURRENT_OFFER.includeHekim){
+CURRENT_OFFER.serviceRows.forEach((row,index)=>{
 
 html += `
 <tr>
-<td>İşyeri Hekimi</td>
-<td>${CURRENT_OFFER.hekimTotal} TL</td>
-<td><input type="number" id="hekimSpecialInput" value="${CURRENT_OFFER.hekimTotal}"></td>
+<td>${row.serviceName}</td>
+<td>${row.price} TL</td>
+<td><input type="number" class="serviceSpecialPriceInput" data-index="${index}" value="${row.price}"></td>
 </tr>
 `;
 
-}
-
-if(CURRENT_OFFER.includeUzman){
-
-html += `
-<tr>
-<td>İş Güvenliği Uzmanı</td>
-<td>${CURRENT_OFFER.uzmanTotal} TL</td>
-<td><input type="number" id="uzmanSpecialInput" value="${CURRENT_OFFER.uzmanTotal}"></td>
-</tr>
-`;
-
-}
+});
 
 html += `
 </table>
@@ -1227,40 +1225,43 @@ document.getElementById("serviceSpecialPriceEditArea").classList.remove("hidden"
 
 function recalculateServiceSpecialPrices(){
 
-if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial"){
+if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial" || !CURRENT_OFFER.serviceRows){
 return;
 }
 
 let total = 0;
 
-if(CURRENT_OFFER.includeHekim){
+document.querySelectorAll(".serviceSpecialPriceInput").forEach(input=>{
 
-CURRENT_OFFER.hekimTotal =
-Number(document.getElementById("hekimSpecialInput").value) || 0;
+const index = Number(input.dataset.index);
+const value = Number(input.value) || 0;
 
-CURRENT_OFFER.hekimKisiBasi =
-Math.round(CURRENT_OFFER.hekimTotal / CURRENT_OFFER.count);
+if(CURRENT_OFFER.serviceRows[index]){
 
-total += CURRENT_OFFER.hekimTotal;
+CURRENT_OFFER.serviceRows[index].price = value;
+
+if(CURRENT_OFFER.serviceRows[index].count !== "-"){
+CURRENT_OFFER.serviceRows[index].perPerson =
+Math.round(value / CURRENT_OFFER.serviceRows[index].count);
+}else{
+CURRENT_OFFER.serviceRows[index].perPerson = "-";
+}
 
 }
 
-if(CURRENT_OFFER.includeUzman){
+});
 
-CURRENT_OFFER.uzmanTotal =
-Number(document.getElementById("uzmanSpecialInput").value) || 0;
-
-CURRENT_OFFER.uzmanKisiBasi =
-Math.round(CURRENT_OFFER.uzmanTotal / CURRENT_OFFER.count);
-
-total += CURRENT_OFFER.uzmanTotal;
-
-}
+CURRENT_OFFER.serviceRows.forEach(row=>{
+total += Number(row.price) || 0;
+});
 
 CURRENT_OFFER.total = total;
 CURRENT_OFFER.finalTotal = total;
 
+document.getElementById("discountInput").value = "";
+
 renderOffer();
+renderServiceSpecialPriceEditor();
 
 }
 
@@ -1293,6 +1294,7 @@ rows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td>${row.price} TL / Ay</td>
 </tr>
@@ -1363,6 +1365,7 @@ rows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td>${row.price} TL / Ay</td>
 </tr>
@@ -1501,6 +1504,7 @@ rows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td>${row.price} TL / Ay</td>
 </tr>
@@ -1755,7 +1759,7 @@ tableRows += `
 <td>${CURRENT_OFFER.dangerText}</td>
 <td>İşyeri Hekimi</td>
 <td>${CURRENT_OFFER.count}</td>
-<td>${CURRENT_OFFER.hekimKisiBasi} TL</td>
+<td>${Math.round(CURRENT_OFFER.finalTotal / CURRENT_OFFER.count)} TL</td>
 <td>${hekimSure}</td>
 <td rowspan="2" class="price-cell">${monthlyPrice}</td>
 </tr>
@@ -1763,7 +1767,7 @@ tableRows += `
 <td>${CURRENT_OFFER.dangerText}</td>
 <td>İş Güvenliği Uzmanı</td>
 <td>${CURRENT_OFFER.count}</td>
-<td>${CURRENT_OFFER.uzmanKisiBasi} TL</td>
+<td>${Math.round(CURRENT_OFFER.finalTotal / CURRENT_OFFER.count)} TL</td>
 <td>${uzmanSure}</td>
 </tr>
 `;
@@ -1779,6 +1783,7 @@ tableRows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td class="price-cell">${row.price} TL / Ay</td>
 </tr>
@@ -1788,7 +1793,7 @@ tableRows += `
 
 tableRows += `
 <tr>
-<td colspan="4" class="price-cell">Toplam</td>
+<td colspan="5" class="price-cell">Toplam</td>
 <td class="price-cell">${CURRENT_OFFER.finalTotal} TL / Ay</td>
 </tr>
 `;
@@ -1913,6 +1918,7 @@ rows += `
 <td>${row.dangerText}</td>
 <td>${row.serviceName}</td>
 <td>${row.count}</td>
+<td>${row.perPerson === "-" ? "-" : row.perPerson + " TL"}</td>
 <td>${row.duration}</td>
 <td>${row.price} TL / Ay</td>
 </tr>
