@@ -263,6 +263,15 @@ font-weight:700;
 white-space:nowrap;
 }
 
+.service-special-note{
+margin-top:8mm;
+margin-bottom:6mm;
+color:#c62828;
+font-size:12px;
+font-weight:700;
+line-height:1.6;
+}
+
 .service-note-box{
 margin-top:16mm;
 border-left:4px solid #1d4f8f;
