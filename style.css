@@ -62,3 +62,27 @@ padding:15px;
 background:#f7f7f7;
 border:1px solid #ddd;
 }
+
+.testItem{
+display:flex;
+align-items:center;
+gap:10px;
+width:100%;
+margin-top:8px;
+}
+
+.testItem span{
+white-space:nowrap;
+}
+
+.testItem::after{
+content:"";
+flex:1;
+border-bottom:1px dashed #999;
+margin-top:2px;
+}
+
+.testItem input{
+width:auto;
+margin:0;
+}
