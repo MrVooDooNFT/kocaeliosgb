@@ -314,6 +314,7 @@ Test birim fiyatlarını göster
 <div id="offerPreview" class="offer hidden"></div>
 
 <div id="testPriceEditArea" class="offer hidden"></div>
+<div id="serviceSpecialPriceEditArea" class="offer hidden"></div>
 
 <div id="discountArea" class="discountBox hidden">
 <label>İndirim Yap:</label>
@@ -658,6 +659,7 @@ showUnitPrices:false
 };
 
 renderOffer();
+renderServiceSpecialPriceEditor();
 showPreview(false);
 
 }
@@ -847,6 +849,7 @@ serviceRows:serviceRows
 };
 
 renderOffer();
+renderServiceSpecialPriceEditor();
 showPreview(false);
 
 }
@@ -1126,6 +1129,7 @@ document.getElementById("offerPreview").innerHTML = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
@@ -1168,6 +1172,98 @@ renderOffer();
 renderTestPriceEditor();
 
 }
+
+
+function renderServiceSpecialPriceEditor(){
+
+if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial"){
+document.getElementById("serviceSpecialPriceEditArea").classList.add("hidden");
+return;
+}
+
+let html = `
+<h3>Hizmet Bazlı Özel Fiyatlar</h3>
+<table>
+<tr>
+<th>Hizmet</th>
+<th>Mevcut Fiyat</th>
+<th>Yeni Fiyat</th>
+</tr>
+`;
+
+if(CURRENT_OFFER.includeHekim){
+
+html += `
+<tr>
+<td>İşyeri Hekimi</td>
+<td>${CURRENT_OFFER.hekimTotal} TL</td>
+<td><input type="number" id="hekimSpecialInput" value="${CURRENT_OFFER.hekimTotal}"></td>
+</tr>
+`;
+
+}
+
+if(CURRENT_OFFER.includeUzman){
+
+html += `
+<tr>
+<td>İş Güvenliği Uzmanı</td>
+<td>${CURRENT_OFFER.uzmanTotal} TL</td>
+<td><input type="number" id="uzmanSpecialInput" value="${CURRENT_OFFER.uzmanTotal}"></td>
+</tr>
+`;
+
+}
+
+html += `
+</table>
+<button onclick="recalculateServiceSpecialPrices()">Yeni Fiyatlarla Tekrar Hesapla</button>
+`;
+
+document.getElementById("serviceSpecialPriceEditArea").innerHTML = html;
+document.getElementById("serviceSpecialPriceEditArea").classList.remove("hidden");
+
+}
+
+function recalculateServiceSpecialPrices(){
+
+if(!CURRENT_OFFER || CURRENT_OFFER.type !== "serviceSpecial"){
+return;
+}
+
+let total = 0;
+
+if(CURRENT_OFFER.includeHekim){
+
+CURRENT_OFFER.hekimTotal =
+Number(document.getElementById("hekimSpecialInput").value) || 0;
+
+CURRENT_OFFER.hekimKisiBasi =
+Math.round(CURRENT_OFFER.hekimTotal / CURRENT_OFFER.count);
+
+total += CURRENT_OFFER.hekimTotal;
+
+}
+
+if(CURRENT_OFFER.includeUzman){
+
+CURRENT_OFFER.uzmanTotal =
+Number(document.getElementById("uzmanSpecialInput").value) || 0;
+
+CURRENT_OFFER.uzmanKisiBasi =
+Math.round(CURRENT_OFFER.uzmanTotal / CURRENT_OFFER.count);
+
+total += CURRENT_OFFER.uzmanTotal;
+
+}
+
+CURRENT_OFFER.total = total;
+CURRENT_OFFER.finalTotal = total;
+
+renderOffer();
+
+}
+
 
 function applyDiscount(){
 
@@ -1219,6 +1315,7 @@ document.getElementById("offerPreview").innerHTML = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
@@ -1288,6 +1385,7 @@ document.getElementById("offerPreview").innerHTML = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
@@ -1335,6 +1433,10 @@ function showPreview(showTestEditor){
 document.getElementById("offerPreview").classList.remove("hidden");
 document.getElementById("discountArea").classList.remove("hidden");
 document.getElementById("pdfButton").classList.remove("hidden");
+
+if(CURRENT_OFFER && CURRENT_OFFER.type === "serviceSpecial"){
+document.getElementById("serviceSpecialPriceEditArea").classList.remove("hidden");
+}
 document.getElementById("discountInput").value = "";
 
 if(showTestEditor){
@@ -1421,6 +1523,7 @@ document.getElementById("offerPreview").innerHTML = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
@@ -1635,6 +1738,7 @@ let tableRows = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
@@ -1651,6 +1755,7 @@ tableRows += `
 <td>${CURRENT_OFFER.dangerText}</td>
 <td>İşyeri Hekimi</td>
 <td>${CURRENT_OFFER.count}</td>
+<td>${CURRENT_OFFER.hekimKisiBasi} TL</td>
 <td>${hekimSure}</td>
 <td rowspan="2" class="price-cell">${monthlyPrice}</td>
 </tr>
@@ -1658,6 +1763,7 @@ tableRows += `
 <td>${CURRENT_OFFER.dangerText}</td>
 <td>İş Güvenliği Uzmanı</td>
 <td>${CURRENT_OFFER.count}</td>
+<td>${CURRENT_OFFER.uzmanKisiBasi} TL</td>
 <td>${uzmanSure}</td>
 </tr>
 `;
@@ -1829,6 +1935,7 @@ document.getElementById("offerPreview").innerHTML = `
 <th>Tehlike Sınıfı</th>
 <th>Verilecek Hizmet</th>
 <th>Çalışan Sayısı</th>
+<th>Kişi Başı Ücret</th>
 <th>Hizmet Süresi</th>
 <th>Ücretlendirme</th>
 </tr>
