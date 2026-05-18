@@ -75,14 +75,19 @@ margin-top:8px;
 white-space:nowrap;
 }
 
-.testItem::after{
+.testItem span::after{
 content:"";
-flex:1;
+display:inline-block;
+vertical-align:middle;
+width:100%;
 border-bottom:1px dashed #999;
-margin-top:2px;
+margin-left:10px;
 }
 
 .testItem input{
+margin-left:auto;
 width:auto;
-margin:0;
+flex-shrink:0;
+position:relative;
+top:2px;
 }
