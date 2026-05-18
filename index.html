@@ -411,7 +411,13 @@ let html = "";
 
 TEST_KEYS.forEach(test=>{
 
-html += `<label><input type="checkbox" class="testItem" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}"> ${test[0]}</label><br>`;
+html += `
+<label class="testItem">
+<span>${test[0]}</span>
+<span class="testLine"></span>
+<input type="checkbox" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}">
+</label>
+`;
 
 });
 
