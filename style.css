@@ -66,28 +66,28 @@ border:1px solid #ddd;
 .testItem{
 display:flex;
 align-items:center;
-gap:10px;
 width:100%;
-margin-top:8px;
+gap:10px;
+margin-top:12px;
+font-size:16px;
+line-height:1;
 }
 
-.testItem span{
+.testItem span:first-child{
 white-space:nowrap;
 }
 
-.testItem span::after{
-content:"";
-display:inline-block;
-vertical-align:middle;
-width:100%;
+.testLine{
+flex:1;
 border-bottom:1px dashed #999;
-margin-left:10px;
+height:1px;
 }
 
 .testItem input{
-margin-left:auto;
 width:auto;
-flex-shrink:0;
+margin:0;
+padding:0;
 position:relative;
-top:2px;
+top:0;
+flex-shrink:0;
 }
