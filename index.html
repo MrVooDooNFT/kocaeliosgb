@@ -1836,7 +1836,15 @@ ${tableRows}
 
 <div class="service-note-box">
 <p>Yukarıda belirtilen ücretler ${CURRENT_OFFER.validDate} tarihine kadar geçerlidir.</p>
-${CURRENT_OFFER.type === "service" ? `<p>${CURRENT_OFFER.dangerText} sınıfı için 1-5 çalışanlı işletmelere özel taban fiyatımız ${CURRENT_OFFER.basePrice} TL'dir.</p>` : ""}
+<p>
+${CURRENT_OFFER.dangerText} sınıfı için 1-5 çalışanlı işletmelere özel taban fiyatımız ${
+CURRENT_OFFER.dangerText === "Az Tehlikeli"
+? PRICES["hizmet_az_tehlikeli_sabit"]
+: CURRENT_OFFER.dangerText === "Tehlikeli"
+? PRICES["hizmet_tehlikeli_sabit"]
+: PRICES["hizmet_cok_tehlikeli_sabit"]
+} TL'dir.
+</p>
 <p>Fiyatlara KDV dahil değildir.</p>
 <p>Teklifimizi değerlendirmelerinize sunar, işlerinizde başarılar dileriz.</p>
 </div>
