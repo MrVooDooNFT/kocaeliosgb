@@ -2095,7 +2095,7 @@ useCORS:true,
 backgroundColor:"#ffffff"
 });
 
-const imgData = canvas.toDataURL("image/png");
+const imgData = canvas.toDataURL("image/jpeg", 0.75);
 const pdfWidth = pdf.internal.pageSize.getWidth();
 const pdfHeight = pdf.internal.pageSize.getHeight();
 
@@ -2103,7 +2103,7 @@ if(!isFirstPage){
 pdf.addPage();
 }
 
-pdf.addImage(imgData,"PNG",0,0,pdfWidth,pdfHeight);
+pdf.addImage(imgData,"JPEG",0,0,pdfWidth,pdfHeight);
 
 }
 
