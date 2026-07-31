@@ -189,6 +189,22 @@ margin:0 0 0 8px;
 flex:0 0 70px;
 }
 
+.special-service-choice{
+display:inline-flex;
+align-items:center;
+gap:7px;
+flex:0 0 auto;
+}
+
+.special-service-choice input[type="checkbox"]{
+display:block;
+width:16px !important;
+height:16px;
+margin:0 !important;
+padding:0 !important;
+flex:0 0 16px;
+}
+
 </style>
 
 </head>
@@ -251,32 +267,27 @@ flex:0 0 70px;
 <h3 style="margin-top:20px;">Tam Zamanlı Hizmetler</h3>
 
 <label class="special-full-time-row">
-<input type="checkbox" id="specialFullExpertC">
-Tam Zamanlı İSG Uzmanı C Sınıfı
+<span class="special-service-choice"><input type="checkbox" id="specialFullExpertC"><span>Tam Zamanlı İSG Uzmanı C Sınıfı</span></span>
 <input type="number" id="specialFullExpertCCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı C Sınıfı adedi">
 </label>
 
 <label class="special-full-time-row">
-<input type="checkbox" id="specialFullExpertB">
-Tam Zamanlı İSG Uzmanı B Sınıfı
+<span class="special-service-choice"><input type="checkbox" id="specialFullExpertB"><span>Tam Zamanlı İSG Uzmanı B Sınıfı</span></span>
 <input type="number" id="specialFullExpertBCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı B Sınıfı adedi">
 </label>
 
 <label class="special-full-time-row">
-<input type="checkbox" id="specialFullExpertA">
-Tam Zamanlı İSG Uzmanı A Sınıfı
+<span class="special-service-choice"><input type="checkbox" id="specialFullExpertA"><span>Tam Zamanlı İSG Uzmanı A Sınıfı</span></span>
 <input type="number" id="specialFullExpertACount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı A Sınıfı adedi">
 </label>
 
 <label class="special-full-time-row">
-<input type="checkbox" id="specialFullDoctor">
-Tam Zamanlı İşyeri Hekimi
+<span class="special-service-choice"><input type="checkbox" id="specialFullDoctor"><span>Tam Zamanlı İşyeri Hekimi</span></span>
 <input type="number" id="specialFullDoctorCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İşyeri Hekimi adedi">
 </label>
 
 <label class="special-full-time-row">
-<input type="checkbox" id="specialFullDsp">
-Tam Zamanlı İSG Uzmanı D.S.P.
+<span class="special-service-choice"><input type="checkbox" id="specialFullDsp"><span>Tam Zamanlı İSG Uzmanı D.S.P.</span></span>
 <input type="number" id="specialFullDspCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı D.S.P. adedi">
 </label>
 
