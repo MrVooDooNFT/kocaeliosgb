@@ -1470,6 +1470,24 @@ renderOffer();
 
 }
 
+function renderCompanyHealthCountRows(){
+
+const tests = CURRENT_OFFER.selectedTests || [];
+const allCountsSame =
+tests.length <= 1 ||
+tests.every(test=>Number(test.count) === Number(tests[0].count));
+
+if(!allCountsSame){
+return "";
+}
+
+return `
+<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
+<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+`;
+
+}
+
 function renderOffer(){
 
 if(CURRENT_OFFER.type === "service"){
@@ -1539,8 +1557,7 @@ document.getElementById("offerPreview").innerHTML = `
 <h1>TAHLİL TEKLİFİ</h1>
 <table>
 <tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
-<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
-<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+${renderCompanyHealthCountRows()}
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Teklif Geçerlilik Süresi</th><td>${CURRENT_OFFER.validDate}</td></tr>
 </table>
@@ -1688,8 +1705,7 @@ title = "TAHLİL TEKLİFİ";
 
 rows = `
 <tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
-<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
-<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+${renderCompanyHealthCountRows()}
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
 ${renderSelectedTestsForPdf()}
@@ -2109,8 +2125,7 @@ if(CURRENT_OFFER.type === "companyHealth"){
 
 tableRows = `
 <tr><th>Firma</th><td>${CURRENT_OFFER.firma}</td></tr>
-<tr><th>Çalışan Sayısı</th><td>${CURRENT_OFFER.count}</td></tr>
-<tr><th>Kişi Başı Ücret</th><td>${CURRENT_OFFER.personPrice} TL</td></tr>
+${renderCompanyHealthCountRows()}
 <tr><th>Toplam Tutar</th><td>${CURRENT_OFFER.finalTotal} TL</td></tr>
 <tr><th>Geçerlilik</th><td>${CURRENT_OFFER.validDate}</td></tr>
 ${renderSelectedTestsForPdf()}
