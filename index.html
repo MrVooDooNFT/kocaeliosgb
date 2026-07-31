@@ -297,7 +297,6 @@ Test birim fiyatlarını göster
 
 <h3 style="margin-top:20px;">Testler</h3>
 <div id="personTests"></div>
-
 <h3 style="margin-top:20px;">Listede Olmayan Test Ekle</h3>
 <input type="text" id="personCustomTestName" placeholder="Test Adı">
 <input type="number" id="personCustomTestPrice" placeholder="Test Fiyatı">
@@ -407,11 +406,21 @@ createTests();
 
 function createTests(){
 
-let html = "";
+let companyHtml = "";
+let personHtml = "";
 
 TEST_KEYS.forEach(test=>{
 
-html += `
+companyHtml += `
+<label class="testItem">
+<span>${test[0]}</span>
+<span class="testLine"></span>
+<input type="number" class="testPersonCount" min="1" placeholder="Kişi" style="width:80px; margin:0 8px;">
+<input type="checkbox" data-name="${test[0]}" data-key="${test[1]}" value="${test[1]}" onchange="setDefaultTestCount(this)">
+</label>
+`;
+
+personHtml += `
 <label class="testItem">
 <span>${test[0]}</span>
 <span class="testLine"></span>
@@ -421,51 +430,24 @@ html += `
 
 });
 
-document.getElementById("companyTests").innerHTML = html;
-document.getElementById("personTests").innerHTML = html;
+document.getElementById("companyTests").innerHTML = companyHtml;
+document.getElementById("personTests").innerHTML = personHtml;
 
 }
 
-loadPrices();
+function setDefaultTestCount(checkbox){
 
-document.getElementById("mainType").addEventListener("change",function(){
-
-document.getElementById("serviceArea").classList.add("hidden");
-document.getElementById("serviceSpecialArea").classList.add("hidden");
-document.getElementById("healthArea").classList.add("hidden");
-
-hideOutputs();
-
-if(this.value === "service"){
-document.getElementById("serviceArea").classList.remove("hidden");
+if(!checkbox.checked){
+return;
 }
 
-if(this.value === "serviceSpecial"){
-document.getElementById("serviceSpecialArea").classList.remove("hidden");
+const countInput = checkbox.closest("label").querySelector(".testPersonCount");
+
+if(countInput && !Number(countInput.value)){
+countInput.value = Number(document.getElementById("healthCount").value) || 1;
 }
 
-if(this.value === "health"){
-document.getElementById("healthArea").classList.remove("hidden");
 }
-
-});
-
-document.getElementById("healthType").addEventListener("change",function(){
-
-document.getElementById("companyArea").classList.add("hidden");
-document.getElementById("personArea").classList.add("hidden");
-
-hideOutputs();
-
-if(this.value === "company"){
-document.getElementById("companyArea").classList.remove("hidden");
-}
-
-if(this.value === "person"){
-document.getElementById("personArea").classList.remove("hidden");
-}
-
-});
 
 function hideOutputs(){
 
@@ -537,12 +519,22 @@ let html = "<div style='margin-top:10px;'>";
 
 list.forEach((test,index)=>{
 
+if(type === "company"){
+html += `
+<label>
+<input type="checkbox" class="customTestItem" data-index="${index}" checked>
+${test.name} (${test.price} TL)
+<input type="number" class="customTestPersonCount" data-index="${index}" min="1" style="width:80px; margin-left:8px;" value="${Number(document.getElementById("healthCount").value) || 1}" placeholder="Kişi">
+</label><br>
+`;
+}else{
 html += `
 <label>
 <input type="checkbox" class="customTestItem" data-index="${index}" checked>
 ${test.name} (${test.price} TL)
 </label><br>
 `;
+}
 
 });
 
@@ -559,7 +551,7 @@ let customList;
 let customAreaSelector;
 
 if(type === "company"){
-areaSelector = "#companyArea .testItem input:checked";
+areaSelector = "#companyArea .testItem input[type='checkbox']:checked";
 customList = CUSTOM_COMPANY_TESTS;
 customAreaSelector = "#companyArea .customTestItem:checked";
 }else{
@@ -569,14 +561,18 @@ customAreaSelector = "#personArea .customTestItem:checked";
 }
 
 const selected = [];
+const companyCount = Number(document.getElementById("healthCount").value) || 1;
 
 document.querySelectorAll(areaSelector).forEach(item=>{
+
+const countInput = item.closest("label").querySelector(".testPersonCount");
 
 selected.push({
 name:item.dataset.name,
 key:item.dataset.key,
 price:PRICES[item.dataset.key] || 0,
 finalPrice:PRICES[item.dataset.key] || 0,
+count:type === "company" ? (Number(countInput && countInput.value) || companyCount) : 1,
 custom:false
 });
 
@@ -589,11 +585,14 @@ const test = customList[index];
 
 if(test){
 
+const countInput = item.closest("label").querySelector(".customTestPersonCount");
+
 selected.push({
 name:test.name,
 key:"custom_" + index,
 price:test.price,
 finalPrice:test.price,
+count:type === "company" ? (Number(countInput && countInput.value) || companyCount) : 1,
 custom:true
 });
 
@@ -888,13 +887,12 @@ return PRICES["min_10_plus"];
 
 function calculateCompanyTotal(selectedTests,count){
 
-let personPrice = 0;
+let total = 0;
 
 selectedTests.forEach(test=>{
-personPrice += Number(test.finalPrice) || 0;
+total += (Number(test.finalPrice) || 0) * (Number(test.count) || count);
 });
 
-let total = personPrice * count;
 const minimumPrice = getMinimumPrice(count);
 
 if(total < minimumPrice){
@@ -1022,12 +1020,18 @@ if(!CURRENT_OFFER.selectedTests || CURRENT_OFFER.selectedTests.length === 0){
 return "";
 }
 
+const isCompany = CURRENT_OFFER.type === "companyHealth";
+
 let html = `
 <h3>Yapılacak Testler</h3>
 <table>
 <tr>
 <th>Test</th>
 `;
+
+if(isCompany){
+html += `<th>Kişi Sayısı</th>`;
+}
 
 if(CURRENT_OFFER.showUnitPrices){
 html += `<th>Birim Fiyat</th>`;
@@ -1038,6 +1042,10 @@ html += `</tr>`;
 CURRENT_OFFER.selectedTests.forEach(test=>{
 
 html += `<tr><td>${test.name}</td>`;
+
+if(isCompany){
+html += `<td>${test.count}</td>`;
+}
 
 if(CURRENT_OFFER.showUnitPrices){
 html += `<td>${test.finalPrice} TL</td>`;
@@ -1060,6 +1068,8 @@ document.getElementById("testPriceEditArea").classList.add("hidden");
 return;
 }
 
+const isCompany = CURRENT_OFFER.type === "companyHealth";
+
 let html = `
 <h3>Seçilen Testlere Özel Fiyat</h3>
 <table>
@@ -1067,8 +1077,13 @@ let html = `
 <th>Test</th>
 <th>Mevcut Fiyat</th>
 <th>Yeni Fiyat</th>
-</tr>
 `;
+
+if(isCompany){
+html += `<th>Kişi Sayısı</th>`;
+}
+
+html += `</tr>`;
 
 CURRENT_OFFER.selectedTests.forEach((test,index)=>{
 
@@ -1077,8 +1092,13 @@ html += `
 <td>${test.name}</td>
 <td>${test.price} TL</td>
 <td><input type="number" class="specialTestPrice" data-index="${index}" value="${test.finalPrice}"></td>
-</tr>
 `;
+
+if(isCompany){
+html += `<td><input type="number" class="specialTestCount" data-index="${index}" min="1" value="${test.count}"></td>`;
+}
+
+html += `</tr>`;
 
 });
 
@@ -1105,6 +1125,17 @@ const value = Number(input.value);
 
 if(CURRENT_OFFER.selectedTests[index]){
 CURRENT_OFFER.selectedTests[index].finalPrice = value;
+}
+
+});
+
+document.querySelectorAll(".specialTestCount").forEach(input=>{
+
+const index = Number(input.dataset.index);
+const value = Math.max(1, Number(input.value) || 1);
+
+if(CURRENT_OFFER.selectedTests[index]){
+CURRENT_OFFER.selectedTests[index].count = value;
 }
 
 });
@@ -1462,30 +1493,41 @@ if(!CURRENT_OFFER.selectedTests || CURRENT_OFFER.selectedTests.length === 0){
 return "";
 }
 
+const isCompany = CURRENT_OFFER.type === "companyHealth";
+const columnCount = 1 + (isCompany ? 1 : 0) + (CURRENT_OFFER.showUnitPrices ? 1 : 0);
+
 let html = `
-<tr><th colspan="${CURRENT_OFFER.showUnitPrices ? 2 : 1}">Yapılacak Testler</th></tr>
+<tr><th colspan="${columnCount}">Yapılacak Testler</th></tr>
+<tr>
+<th>Test</th>
 `;
 
-CURRENT_OFFER.selectedTests.forEach(test=>{
+if(isCompany){
+html += `<th>Kişi Sayısı</th>`;
+}
 
 if(CURRENT_OFFER.showUnitPrices){
+html += `<th>Birim Fiyat</th>`;
+}
+
+html += `</tr>`;
+
+CURRENT_OFFER.selectedTests.forEach(test=>{
 
 html += `
 <tr>
 <td>${test.name}</td>
-<td>${test.finalPrice} TL</td>
-</tr>
 `;
 
-}else{
-
-html += `
-<tr>
-<td colspan="2">${test.name}</td>
-</tr>
-`;
-
+if(isCompany){
+html += `<td>${test.count}</td>`;
 }
+
+if(CURRENT_OFFER.showUnitPrices){
+html += `<td>${test.finalPrice} TL</td>`;
+}
+
+html += `</tr>`;
 
 });
 
@@ -1497,7 +1539,6 @@ function buildPdfTemplate(){
 
 let title = "";
 let rows = "";
-
 
 if(CURRENT_OFFER.type === "serviceSpecial"){
 
