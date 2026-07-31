@@ -233,26 +233,31 @@ margin:0 auto;
 <label style="display:block; margin-top:8px;">
 <input type="checkbox" id="specialFullExpertC">
 Tam Zamanlı İSG Uzmanı C Sınıfı
+<input type="number" id="specialFullExpertCCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı C Sınıfı adedi">
 </label>
 
 <label style="display:block; margin-top:8px;">
 <input type="checkbox" id="specialFullExpertB">
 Tam Zamanlı İSG Uzmanı B Sınıfı
+<input type="number" id="specialFullExpertBCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı B Sınıfı adedi">
 </label>
 
 <label style="display:block; margin-top:8px;">
 <input type="checkbox" id="specialFullExpertA">
 Tam Zamanlı İSG Uzmanı A Sınıfı
+<input type="number" id="specialFullExpertACount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı A Sınıfı adedi">
 </label>
 
 <label style="display:block; margin-top:8px;">
 <input type="checkbox" id="specialFullDoctor">
 Tam Zamanlı İşyeri Hekimi
+<input type="number" id="specialFullDoctorCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İşyeri Hekimi adedi">
 </label>
 
 <label style="display:block; margin-top:8px;">
 <input type="checkbox" id="specialFullDsp">
 Tam Zamanlı İSG Uzmanı D.S.P.
+<input type="number" id="specialFullDspCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı D.S.P. adedi">
 </label>
 
 <button onclick="createServiceSpecialOffer()">Hizmet Teklifi Özel Oluştur</button>
@@ -769,6 +774,12 @@ const fullExpertA = document.getElementById("specialFullExpertA").checked;
 const fullDoctor = document.getElementById("specialFullDoctor").checked;
 const fullDsp = document.getElementById("specialFullDsp").checked;
 
+const fullExpertCCount = Math.max(1, Number(document.getElementById("specialFullExpertCCount").value) || 1);
+const fullExpertBCount = Math.max(1, Number(document.getElementById("specialFullExpertBCount").value) || 1);
+const fullExpertACount = Math.max(1, Number(document.getElementById("specialFullExpertACount").value) || 1);
+const fullDoctorCount = Math.max(1, Number(document.getElementById("specialFullDoctorCount").value) || 1);
+const fullDspCount = Math.max(1, Number(document.getElementById("specialFullDspCount").value) || 1);
+
 const config = getSpecialServiceConfig(danger);
 
 if(!firma || !danger || !count){
@@ -816,13 +827,16 @@ price:price
 }
 
 if(fullExpertC){
-const price = PRICES["ozel_tam_zamanli_uzman_c"] || 0;
+const unitPrice = PRICES["ozel_tam_zamanli_uzman_c"] || 0;
+const price = unitPrice * fullExpertCCount;
 total += price;
 
 serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı C Sınıfı",
-count:"-",
+count:fullExpertCCount + " adet",
+quantity:fullExpertCCount,
+fullTime:true,
 perPerson:"-",
 duration:"Tam zamanlı",
 price:price
@@ -830,13 +844,16 @@ price:price
 }
 
 if(fullExpertB){
-const price = PRICES["ozel_tam_zamanli_uzman_b"] || 0;
+const unitPrice = PRICES["ozel_tam_zamanli_uzman_b"] || 0;
+const price = unitPrice * fullExpertBCount;
 total += price;
 
 serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı B Sınıfı",
-count:"-",
+count:fullExpertBCount + " adet",
+quantity:fullExpertBCount,
+fullTime:true,
 perPerson:"-",
 duration:"Tam zamanlı",
 price:price
@@ -844,13 +861,16 @@ price:price
 }
 
 if(fullExpertA){
-const price = PRICES["ozel_tam_zamanli_uzman_a"] || 0;
+const unitPrice = PRICES["ozel_tam_zamanli_uzman_a"] || 0;
+const price = unitPrice * fullExpertACount;
 total += price;
 
 serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı A Sınıfı",
-count:"-",
+count:fullExpertACount + " adet",
+quantity:fullExpertACount,
+fullTime:true,
 perPerson:"-",
 duration:"Tam zamanlı",
 price:price
@@ -858,13 +878,16 @@ price:price
 }
 
 if(fullDoctor){
-const price = PRICES["ozel_tam_zamanli_hekim"] || 0;
+const unitPrice = PRICES["ozel_tam_zamanli_hekim"] || 0;
+const price = unitPrice * fullDoctorCount;
 total += price;
 
 serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İşyeri Hekimi",
-count:"-",
+count:fullDoctorCount + " adet",
+quantity:fullDoctorCount,
+fullTime:true,
 perPerson:"-",
 duration:"Tam zamanlı",
 price:price
@@ -872,13 +895,16 @@ price:price
 }
 
 if(fullDsp){
-const price = PRICES["ozel_tam_zamanli_dsp"] || 0;
+const unitPrice = PRICES["ozel_tam_zamanli_dsp"] || 0;
+const price = unitPrice * fullDspCount;
 total += price;
 
 serviceRows.push({
 dangerText:config.dangerText,
 serviceName:"Tam Zamanlı İSG Uzmanı D.S.P.",
-count:"-",
+count:fullDspCount + " adet",
+quantity:fullDspCount,
+fullTime:true,
 perPerson:"-",
 duration:"Tam zamanlı",
 price:price
@@ -1318,11 +1344,11 @@ if(CURRENT_OFFER.serviceRows[index]){
 
 CURRENT_OFFER.serviceRows[index].price = value;
 
-if(CURRENT_OFFER.serviceRows[index].count !== "-"){
+if(CURRENT_OFFER.serviceRows[index].fullTime){
+CURRENT_OFFER.serviceRows[index].perPerson = "-";
+}else{
 CURRENT_OFFER.serviceRows[index].perPerson =
 Math.round(value / CURRENT_OFFER.serviceRows[index].count);
-}else{
-CURRENT_OFFER.serviceRows[index].perPerson = "-";
 }
 
 }
