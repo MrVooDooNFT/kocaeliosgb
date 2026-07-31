@@ -435,6 +435,47 @@ document.getElementById("personTests").innerHTML = personHtml;
 
 }
 
+loadPrices();
+
+document.getElementById("mainType").addEventListener("change",function(){
+
+document.getElementById("serviceArea").classList.add("hidden");
+document.getElementById("serviceSpecialArea").classList.add("hidden");
+document.getElementById("healthArea").classList.add("hidden");
+
+hideOutputs();
+
+if(this.value === "service"){
+document.getElementById("serviceArea").classList.remove("hidden");
+}
+
+if(this.value === "serviceSpecial"){
+document.getElementById("serviceSpecialArea").classList.remove("hidden");
+}
+
+if(this.value === "health"){
+document.getElementById("healthArea").classList.remove("hidden");
+}
+
+});
+
+document.getElementById("healthType").addEventListener("change",function(){
+
+document.getElementById("companyArea").classList.add("hidden");
+document.getElementById("personArea").classList.add("hidden");
+
+hideOutputs();
+
+if(this.value === "company"){
+document.getElementById("companyArea").classList.remove("hidden");
+}
+
+if(this.value === "person"){
+document.getElementById("personArea").classList.remove("hidden");
+}
+
+});
+
 function setDefaultTestCount(checkbox){
 
 if(!checkbox.checked){
