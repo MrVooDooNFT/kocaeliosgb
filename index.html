@@ -169,6 +169,26 @@ display:block;
 margin:0 auto;
 }
 
+.special-full-time-row{
+display:flex !important;
+align-items:center;
+gap:8px;
+margin-top:8px !important;
+}
+
+.special-full-time-row input[type="checkbox"]{
+width:auto;
+margin:0;
+padding:0;
+flex:0 0 auto;
+}
+
+.special-full-time-row .special-service-count{
+width:70px !important;
+margin:0 0 0 8px;
+flex:0 0 70px;
+}
+
 </style>
 
 </head>
@@ -230,34 +250,34 @@ margin:0 auto;
 
 <h3 style="margin-top:20px;">Tam Zamanlı Hizmetler</h3>
 
-<label style="display:block; margin-top:8px;">
+<label class="special-full-time-row">
 <input type="checkbox" id="specialFullExpertC">
 Tam Zamanlı İSG Uzmanı C Sınıfı
-<input type="number" id="specialFullExpertCCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı C Sınıfı adedi">
+<input type="number" id="specialFullExpertCCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı C Sınıfı adedi">
 </label>
 
-<label style="display:block; margin-top:8px;">
+<label class="special-full-time-row">
 <input type="checkbox" id="specialFullExpertB">
 Tam Zamanlı İSG Uzmanı B Sınıfı
-<input type="number" id="specialFullExpertBCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı B Sınıfı adedi">
+<input type="number" id="specialFullExpertBCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı B Sınıfı adedi">
 </label>
 
-<label style="display:block; margin-top:8px;">
+<label class="special-full-time-row">
 <input type="checkbox" id="specialFullExpertA">
 Tam Zamanlı İSG Uzmanı A Sınıfı
-<input type="number" id="specialFullExpertACount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı A Sınıfı adedi">
+<input type="number" id="specialFullExpertACount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı A Sınıfı adedi">
 </label>
 
-<label style="display:block; margin-top:8px;">
+<label class="special-full-time-row">
 <input type="checkbox" id="specialFullDoctor">
 Tam Zamanlı İşyeri Hekimi
-<input type="number" id="specialFullDoctorCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İşyeri Hekimi adedi">
+<input type="number" id="specialFullDoctorCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İşyeri Hekimi adedi">
 </label>
 
-<label style="display:block; margin-top:8px;">
+<label class="special-full-time-row">
 <input type="checkbox" id="specialFullDsp">
 Tam Zamanlı İSG Uzmanı D.S.P.
-<input type="number" id="specialFullDspCount" min="1" value="1" style="width:70px; margin-left:8px;" aria-label="Tam Zamanlı İSG Uzmanı D.S.P. adedi">
+<input type="number" id="specialFullDspCount" min="1" value="1" class="special-service-count" aria-label="Tam Zamanlı İSG Uzmanı D.S.P. adedi">
 </label>
 
 <button onclick="createServiceSpecialOffer()">Hizmet Teklifi Özel Oluştur</button>
